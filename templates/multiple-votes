@@ -1,0 +1,19 @@
+votetaker       := value mailfrom | fill-left 65
+body            := value body     | quote "> "
+
+== TEMPLATE =================================================================
+Dein Wahlschein enthielt widerspruechliche Stimmen (z.B. sowohl JA- als
+auch NEIN-Stimme fuer dieselbe Gruppe).
+
+Das passiert meistens, wenn du mehrere Zeilen schickst,  die als Stimme
+interpretiert werden, z. B. wenn du vergisst, eine Beispielzeile im CfV
+zu loeschen. Bitte lies den CfV noch einmal und wiederhole deine Stimm-
+abgabe.
+
+Hier die Mail, die ich erhalten habe:
+
+[$body]
+
+
+[$votetaker]
+\[mit [$usevote_version]\]

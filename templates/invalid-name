@@ -1,0 +1,19 @@
+votetaker       := value mailfrom | fill-left 65
+head            := value head     | quote "> "
+body            := value body     | quote "> "
+
+== TEMPLATE =================================================================
+Dieser Call for Votes (CfV) erfordert die Angabe eines Real-Namens ent-
+weder im "From:"-Feld des Headers oder im dafuer vorgesehehen Feld des
+Wahlscheins. Bitte wiederhole Deine Stimmabgabe mit Angabe Deines wirk-
+lichen Namens.
+
+Hier die Mail, die ich erhalten habe:
+
+[$head]
+>
+[$body]
+
+
+[$votetaker]
+\[mit [$usevote_version]\]

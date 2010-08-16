@@ -1,0 +1,27 @@
+votetaker       := value mailfrom | fill-left 65
+head            := value head     | quote "> "
+body            := value body     | quote "> "
+
+== TEMPLATE =================================================================
+Deine Stimme kann nicht akzeptiert werden, da du eine kritische
+Absenderadresse verwendest. Nichtpersoenliche Accounts wie root@,
+operator@, postmaster@, guest@ usw. sind im Allgemeinen nicht zu
+Abstimmungen zugelassen, insbesondere, wenn kein Realname angegeben
+wird. Stimmen von Anon-Servern werden ebenfalls nicht akzeptiert.
+Bitte stimme erneut von einem persoenlichen Account aus ab.
+
+Wenn das ein Fehler ist und dein wahrer Name/Account faelschlicherweise
+fuer einen dieser unpersoenlichen oder Anon-Accounts gehalten wurde, so
+schicke bitte eine eMail an meine persoenliche Adresse. Sorry fuer das
+umstaendliche Verfahren, aber nur so ist die zuverlaessige automatische
+Stimmenzaehlung moeglich.
+
+Hier die Mail, die ich erhielt:
+
+[$head]
+>
+[$body]
+
+
+[$votetaker]
+\[mit [$usevote_version]\]

@@ -1,0 +1,20 @@
+votetaker       := value mailfrom | fill-left 65
+body            := value body     | quote "> "
+
+== TEMPLATE =================================================================
+Diese Abstimmung unterliegt bestimmten Bedingungen, fuer welche Gruppen
+wie abgestimmt werden kann. Diese Bedingungen wurden im Call for Votes
+erklaert. Deine Stimme verletzt eine oder mehrere der Regeln. Bitte lies
+den CfV noch einmal durch und wiederhole Deine Stimmabgabe.
+
+Die folgenden Regeln wurden nicht eingehalten:
+
+[$rules]
+
+Hier die Mail, die ich erhalten habe:
+
+[$body]
+
+
+[$votetaker]
+\[mit [$usevote_version]\]

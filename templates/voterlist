@@ -1,0 +1,12 @@
+multi-line 	:= value name | justify-before mail 72
+
+== TEMPLATE ============================================================
+
+Folgende Personen haben sich bislang an der Abstimmung beteiligt:
+========================================================================
+[@multi|[$multi-line]|\n]
+
+
+Als ungueltig erkannte Stimmen:
+========================================================================
+[@invalid|[$multi-line]\n[$reason]|\n]

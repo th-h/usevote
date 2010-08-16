@@ -1,0 +1,1284 @@
+UseVoteGer 4.09  (c) 2001-2007 Marc Langer
+
+UseVoteGer is a voting software for usenet votes.
+
+This script package is free software; you can redistribute it and/or
+modify it under the terms of the GNU Public License as published by the
+Free Software Foundation.
+
+Many thanks to:
+- Ron Dippold (Usevote 3.0, 1993/94)
+- Frederik Ramm (German translation, 1994)
+- Wolfgang Behrens (UseVoteGer 3.1, based on Frederik's translation, 1998/99)
+- Cornell Binder for some good advice and code fragments
+  (e.g. UVtemplate.pm, UVformats.pm)
+
+This is a complete rewrite of UseVoteGer 3.1 in Perl (former versions were
+written in C). Not all functions of Usevote/UseVoteGer 3.x are implemented!
+ 
+-------------------------------------------------------------------------------
+
+UseVoteGer 4.09 - Usenet-Abstimmungssoftware
+===========================================
+
+von Marc Langer <uv@marclanger.de>
+
+aktuelle Versionen: http://www.usevote.de
+
+
+Inhaltsverzeichnis
+==================
+
+1.  Kurzbeschreibung
+2.  Usevote fuer Ungeduldige
+3.  Kompatibilitaet zu frueheren Versionen
+4.  Liste der Dateien
+5.  Anfangs-Konfiguration
+6.  Konfiguration fuer einzelne Abstimmungen
+7.  Wahlschein generieren
+8.  Stimmen verarbeiten
+9.  Unzustellbare Bestaetigungen
+10. 2. CfV / Result
+11. Datenschutz
+12. Personalisierte Wahlscheine
+13. Die einzelnen Programme
+14. Die Konfigurationsdateien
+15. Templates
+
+
+1. Kurzbeschreibung
+===================
+
+Diese Software vereinfacht die Durchfuehrung von Usenet-Abstimmungen.
+Usevote in der Urversion wurde von Ron Dippold fuer die Reorganisation
+der Gruppe comp.sys.ibm.pc.games geschrieben und spaeter fuer die
+allgemeine Verwendung verbessert.
+
+Die deutsche Uebersetzung von Frederik Ramm diente jahrelang als
+Grundlage fuer CfV-Auswertungen im deutschsprachigen Raum.
+Wolfgang Behrens von den German Volunteer Votetakers (GVV) passte
+es spaeter an neue Begebenheiten (z.B. personalisierte Wahlscheine)
+an. Jedoch liefen die UseVoteGer 3.1beta-Versionen aufgrund eines
+unbekannten Fehlers nicht auf jedem System (Segmentation Fault).
+
+Um groessere Flexibilitaet und Plattformunabhaengigkeit zu bieten,
+habe ich mich entschlossen, UseVoteGer in Perl neu zu implementieren.
+Getestet wurde diese Version mit Perl 5.x unter Linux sowie
+ActiveState Perl unter Windows 98.
+
+
+2. Usevote fuer Ungeduldige
+===========================
+
+I. Einmalig bei der Usevote-Erstinstallation
+   (1) usevote.cfg nach Bedarf anpassen (selbsterklaerend)
+       ACHTUNG: Unter Windows gibt es das Programm "less" nicht, da "more"
+       aber einigermassen broken ist, sollte man sich less fuer Windows
+       herunterladen: http://www.greenwoodsoftware.com/less/less381d.zip
+       Notfalls laesst sich auch in usevote.cfg die Einstellung "pager"
+       auf "more" setzen, aber viel Freude hat man damit nicht...
+   (2) Evtl. die Templates im gleichnamigen Unterverzeichnis fuer
+       eigenen Geschmack anpassen. Die Templates enthalten saemtliche
+       Texte fuer Bestaetigungs-/Fehlermails sowie die Ausgabeformate
+       und Texte fuer die CfVs und das Result.
+   (3) Perlmodule MIME::Parser, MIME::QuotedPrint, Digest::MD5,
+       Date::Parse und Email::Date installieren, falls noch nicht vorhanden.
+       Bei Benutzung von POP3 oder SMTP (siehe usevote.cfg) muss
+       Libnet installiert sein (Net::POP3 und Net::SMTP).
+       (Fuer Perl-Einsteiger: Unter Unix geht die Modul-Installation
+       sehr einfach mit "perl -MCPAN -e shell", ActivePerl fuer
+       Windows hat einen eigenen Paketmanager)
+
+       Achtung: Bei meinem ActivePerl 5.6.1 war eine alte Libnet-Version
+       enthalten, die noch keine SMTP-Authentication unterstuetzte.
+       Bei Benutzung dieses Features muss evtl. erst upgedated werden.
+
+II. Fuer jedes Voting
+   (1) usevote.cfg auf das durchzufuehrende Voting anpassen
+       (selbsterklaerend)
+   (2) bei Sonderregeln (Abhaengigkeiten der einzelnen Abstimmungspunkte)
+       in usevote.rul Regeln definieren (selbsterklaerend)
+   (3) CfV erstellen und Wahlschein mit uvballot.pl generieren
+   (4) Fertigen CfV einreichen und auf Veroeffentlichung warten ;-)
+   (5) Bis zum 2. CfV regelmaessig (an den ersten Tagen mehrmals taeglich,
+       spaeter einmal taeglich) dies tun:
+       - uvvote.pl durchlaufen lassen
+       - im Verzeichnis tmp/ die Datei ergebnis.* (Ergebnis der Auswertung)
+         und evtl. ack.* (Bestaetigungsmails an die Waehler) kontrollieren
+       - Falls es Probleme gab: Bitte den Abschnit "Stimmen verarbeiten"
+         weiter unten in dieser Datei genau durchlesen. Dort steht
+         beschrieben, wie Fehler korrigiert werden koennen
+       - "uvvote.pl clean" aufrufen, um die Bestaetigungen zu verschicken
+         und das Ergebnis zu speichern/archivieren
+       - Falls Wahlbestaetigungen als unzustellbar zurueckkommen, solltest
+         Du diese zusammen in einer Datei speichern oder in ein spezielles
+         POP3-Postfach leiten
+   (6) Zwischenbestaetigung fuer den 2. CfV mit "uvcount.pl -l" erzeugen und
+       veroeffentlichen. Falls Wahlbestaetigungen als unzustellbar
+       zurueckkamen, kannst Du mit "uvbounce.pl dateiname" automatisch eine
+       Liste der ungueltigen Adressen erzeugen ("dateiname" ist die Datei,
+       in die Du zuvor die Bounces gespeichert hattest). Siehe auch Abschnitt
+       "Unzustellbare Bestaetigungen" weiter unten in dieser Datei, dort
+       ist auch erklaert, wie die Bounces aus einem POP3-Postfach gelesen
+       werden koennen.
+   (7) Bis zum Result wieder wie (5)
+   (8) Zum vorgegebenen Zeitpunkt die Wahl abschliessen,
+       mit "uvcount.pl -r -v" Endergebnis erzeugen und veroeffentlichen
+       (zuvor wiederum Liste der ungueltigen Mailadressen erzeugen, siehe
+       Punkt 6)
+
+Weitere Details finden sich im Folgenden.
+Jeder Nutzer dieser Software sollte sich diesen Text wenigstens einmal
+komplett durchlesen.
+
+Abschnitt 6 beschreibt, wie mehrere Abstimmungen gleichzeitig durchgefuehrt
+werden koennen, ohne saemtliche Programmdateien zu kopieren.
+
+
+3. Kompatibilitaet zu frueheren Versionen
+=========================================
+
+- englische Usevote-Versionen: keine Kompatibilitaet
+
+- deutsche Usevote-Versionen (Usevote 3.0a, UseVoteGer 3.1):
+  * Wahlscheine haben neue Markierungen zum sicheren Erkennen
+    der Stimmen. Bisherige Wahlscheine sind mit dieser Version
+    nicht mehr einsetzbar!
+
+  * acktext.txt gibt es nicht mehr, statt dessen sind im Unterverzeichnis
+    "templates" Vorlagen zu finden, die diese Texte enthalten.
+
+  * usevote.cfg ist komplett inkompatibel
+
+  * usevote.rul: voll kompatibel, ohne Einschraenkungen
+
+  * Ergebnisdateien: Inhalt kompatibel, aber Namensgebung geaendert
+    (obwohl irrelevant, da Umstieg auf diese Version waehrend
+    einer laufenden Wahl nicht moeglich)
+
+  * scheinkennungen: Dateiformat gaendert (aus selbigen Gruenden
+    nicht weiter wichtig)
+
+  * uvshell: integriert in uvvote.pl, ueber usevote.cfg steuerbar
+    
+  * uvvote.pl: Aufrufparameter geaendert / Zusammenfuehrung mit uvshell
+  
+  * uvcfv.pl: Alte Funktionalitaet ist nicht mehr implementiert,
+    statt dessen dient das Tool jetzt zum Generieren der persoenlichen
+    Wahlscheine und Verschicken des CfV an die Waehler
+ 
+  * uvcount.pl: Beinhaltet auch uvack und uvdup. Drei Einzelprogramme
+    schienen mir ineffizient.
+
+  * uvbounce.pl: Ausgabeformat etwas anders
+
+
+4. Liste der Dateien
+====================
+
+* Ausgelieferte Dateien:
+
+CHANGES           Versionsaenderungen
+COPYING           GNU General Public License
+README            Diese Datei
+UVconfig.pm       Routinen zum Einlesen und Pruefen der Konfiguration
+UVformats.pm      Routinen zum Formatieren von Texten in Templates
+UVmenu.pm         Routinen zur Interaktion mit dem Wahlleiter
+UVmessage.pm      Routinen zum Parsen von Texten und Ersetzen von Platzhaltern
+UVreadmail.pm     Routinen zum Einlesen und MIME-Decodieren der Mails
+UVrules.pm        Routinen zur Regelverarbeitung (usevote.rul)
+UVsendmail.pm     Routinen zum Erzeugen von Mails
+UVtemplate.pm     Routinen zur Verarbeitung von Vorlagen (Templates)
+bdsgtext.cfg      Spezieller Text fuer den Wahlschein (Hinweis auf
+                  Datenschutzgesetz), muss ausserhalb Deutschlands ggfls.
+                  angepasst oder kann ignoriert werden (bdsg=0 in usevote.cfg)
+mailpatterns.cfg  Wildcards fuer verdaechtige Mailadressen
+messages.cfg      Programm-Meldungen (Ressourcen-Datei)
+scheinkennungen   Speicherung der Scheinkennungen bei personalisierten
+                  Wahlscheinen. Muss zu Beginn der Abstimmung leer sein.
+usevote.cfg       Konfigurationsdatei
+usevote.rul       Abstimmungsregeln
+uvballot.pl       Wahlschein aus Abstimmungsdaten erstellen
+uvbounce.pl       Listen von unzustellbaren Bestaetigungen erzeugen
+uvcfv.pl          Erstellen und Verschicken von personalisierten Wahlscheinen
+uvcount.pl        Stimmenzaehlung, Erstellen von Waehlerlisten und
+                  Aussortieren von doppelten Stimmabgaben
+uvvote.pl         Stimmen verarbeiten (fuer die taegliche Arbeit)
+
+templates/                Verzeichnis mit Templates (Vorlagen)
+  ack-mail     	          Template fuer Bestaetigungsmails
+  address-not-registered  Fehlermail: Noch keine Scheinkennung fuer Adresse
+                          vergeben
+  ballot                  Template fuer einen Wahlschein
+  ballot-personal         Template fuer personalisierten Wahlschein
+  ballot-request          Template fuer eine Wahlscheinanforderung
+  bdsg-error              Fehlermail: Datenschutzklausel nicht akzeptiert
+  bouncelist              Template fuer Liste der ungueltigen Mailadressen
+  cancelled               Template fuer Bestaetigung der Stimmannullierung
+  invalid-account         Fehlermail: Fragwuerdige Mailadresse (Role Account)
+  invalid-name            Fehlermail: Kein gueltiger Name in Mail/Wahlschein
+                          gefunden
+  mailheader              Template fuer den Header von Mails an die Waehler
+  multiple-votes          Fehlermail: Widerspruechliche Stimmen im Wahlschein
+  no-ballot               Fehlermail: Kein Wahlschein in Mail gefunden
+  no-ballotid             Fehlermail: Keine Wahlscheinkennung gefunden
+  no-votes                Fehlermail: Keine Stimmen abgegeben
+  result-multi            Template fuer ein Wahlergebnis mit mehreren Gruppen
+  result-single           Template fuer ein Wahlergebnis mit einer Gruppe
+  result-proportional     Template fuer ein Wahlergebnis, bei dem das Verhaeltnis
+                          oder die Differenz von Ja- und Nein-Stimmen entscheidet
+                          (z.B. Moderationsnachwahlen, "proportional=1" gesetzt)
+  rule-violated           Fehlermail: Wahlregeln aus usevote.rul verletzt
+  voterlist               Template fuer eine Waehlerliste (2. CfV)
+  votes-multi             Template fuer eine Stimmenliste mit mehreren Gruppen
+  votes-single            Template fuer eine Stimmenliste bei einer Gruppe
+  wrong-ballotid          Fehlermail: Falsche Wahlscheinkennung angegeben
+
+* Beim Programmlauf erstellte Dateien (Name ist konfigurierbar):
+
+ergebnis.alle     Saemtliche Einzelergebnisse zusammengefasst (wird 
+                  bei jedem Lauf von uvvote.pl neu erstellt)
+errors.log        Fehlermeldungen, die beim Programmlauf auftauchen,
+                  werden hier abgelegt. Normalerweise bleibt die Datei
+                  leer, ansonsten wird beim Programmende eine Warnung
+                  mit Verweis auf die Datei ausgegeben.
+uidlcache         Eindeutige IDs der abgerufenen Mails (bei Benutzung
+                  von POP3). Darf waehrend einer laufenden Abstimmung
+                  keinesfalls geloescht werden, um Mehrfachzaehlung von
+                  Stimmen zu verhindern.
+uidlcache_req     dto, fuer die Mailbox mit den Wahlscheinanforderungen
+                  (bei Verwendung von personalisierten Wahlscheinen)
+uidlcache_bounce  dto, fuer die Mailbox mit den Bounces (wird von
+                  uvbounce.pl ausgewertet)
+usevote.lock      Temporaere Lockdatei, um gleichzeitiges Ausfuehren
+                  mehrerer Instanzen zu verhindern. Kann (falls vorhanden)
+                  gefahrlos geloescht werden, wenn gerade keines der
+                  Usevote-Scripts laeuft.
+
+* Folgende Unterverzeichnisse werden von Usevote im aktuellen
+  Verzeichnis (CWD) angelegt:
+
+fertig/           Verzeichnis fuer Archivierung verarbeiteter Dateien
+tmp/              Verzeichnis fuer temporaere Dateien
+
+* Von Usevote dort erstellte Dateien:
+
+ack.*             Bestaetigungsmails (in tmp/)
+ack.control       Steuerungsdatei fuer Bestaetigungsmails (in tmp/)
+domail            Shellscript zum Verschicken der Mails (in tmp/)
+ergebnis.*        Ergebnisdateien einzelner Durchlaeufe (zunaecht in tmp/,
+                  spaeter nach fertig/ verschoben und archiviert)
+stimmen.*         Archivierte Stimmendateien (dto.)
+
+
+5. Anfangs-Konfiguration
+========================
+ 
+Zuerst solltest Du "usevote.cfg" fuer Dein System anpassen (Details
+dort in den Kommentarzeilen und weiter hinten in dieser Dokumentation).
+Unter Windows werden die Regular Expressions fuer die Stimmenerkennung
+moeglicherweise lauter unlesbare Zeichen enthalten (anderer Zeichensatz),
+dort sollten saemtliche in Namen vorkommende Umlaute und Buchstaben mit
+Accents etc. aufgefuehrt werden. Weiter ist bei Nutzung von Windows zu
+beachten, dass das Kommando zum Loeschen des Bildschirms "cls" und nicht
+"clear" heisst. Dazu gibt es auch eine Einstellung in usevote.cfg. Den
+standardmaessig eingestellten Pager "less" gibt es unter Windows zunaechst
+nicht, more ist aber so buggy, dass man sich am besten "less" fuer
+Windows herunterladen sollte:
+http://www.greenwoodsoftware.com/less/less381d.zip
+
+Im Unterverzeichnis "templates" findest Du Vorlagen, die fuer die
+einzelnen Bestaetigungstexte, Mails, Wahlscheine und Waehlerlisten
+verwendet werden. Hier kannst Du unter Beachtung der Syntax (siehe
+gesonderte Dokumentation) alle Texte an Deinen Geschmack und Deine
+Beduerfnisse anpassen.
+
+
+6. Konfiguration fuer einzelne Abstimmungen
+===========================================
+ 
+Fuer jede Abstimmung muss eine eigene Konfigurationsdatei geschrieben
+werden. Aendere einfach usevote.cfg entsprechend der Regeln fuer die
+betreffende Abstimmung. Falls Du haeufiger Wahlleiter spielst, solltest
+Du Dir eine globale Konfigurationsdatei mit Standardeinstellungen
+(z.B. als ~/.usevote-defaults.cfg) anlegen und in der usevote.cfg nur
+noch die Einstellungen setzen, die sich fuer jede Abstimmunge aendern.
+Die globale Datei kann am Anfang der usevote.cfg mit folgender Zeile
+eingebunden werden:
+
+include ~/.usevote-defaults.cfg
+
+Zu beachten ist aber, dass jeweils die letzte Definition einer Option
+benutzt wird. Die usevote.cfg sollte daher wirklich nur noch
+abstimmungsspezifische Einstellungen enthalten, um nicht versehentlich
+die globalen Optionen zu ¸berschreiben.
+
+Ausserdem muss die Datei "usevote.rul" geprueft werden. Wenn Deine
+Abstimmung irgendwelche speziellen Regeln enthaelt (z.B. man kann
+nur fuer Gruppe x stimmen, wenn man auch fuer y gestimmt hat, oder man
+muss fuer den .misc-Abschnitt stimmen, wenn man fuer irgendeinen
+anderen Abschnitt gestimmt hat), dann solltest Du diese Datei lesen
+und entsprechend aendern. Allerdings empfiehlt es sich, bereits im
+RfD deutlich auf die Regeln hinzuweisen, die zur Anwendung kommen sollen.
+Die eingegebenen Regeln koennen dann mit "uvvote -t" getestet werden.
+
+Es ist auch moeglich, mehrere Abstimmungen gleichzeitig durchzufuehren,
+ohne die .pl und .pm Dateien jedesmal mitzukopieren. Folgende Dateien
+sollten im Abstimmungsverzeichnis vorhanden sein (notwendig ist nur
+usevote.cfg, darin kˆnnen alle anderen Pfade angepasst werden):
+
+bdsgtext.cfg
+mailpatterns.cfg
+messages.cfg
+scheinkennungen
+usevote.cfg
+usevote.rul
+
+Ggf. sollte das "templates"-Verzeichnis kopiert werden, falls
+individuelle Templates fuer einzelne Abstimmungen verwendet werden.
+
+Auﬂerdem muessen i.d.R. einige Pfade in der usevote.cfg angepasst
+werden. Dadurch ist auch die Angabe eines anderen Verzeichnisses
+fuer einige der oben genannten Konfigurationsdateien moeglich,
+falls diese zentral gepflegt werden sollen (z.B. messages.cfg und
+mailpatterns.cfg).
+
+Damit die Usevote-Perlmodule gefunden werden, sollten sie im
+selben Verzeichnis wie die Programmdateien liegen bleiben. Ansonsten
+muss eine Umgebungsvariable gesetzt werden:
+
+PERL5LIB=..
+
+.. steht f¸r das ¸bergeordnete Verzeichnis. Ggf. muss hier ein
+absoluter Pfad eingetragen werden, wenn das Abstimmungsverzeichnis
+kein Unterverzeichnis des Usevote-Verzeichnisses ist.
+
+Je nach Betriebssystem kann die obige Zeile etwas anders aussehen,
+unter Windows sollte z.B. "SET PERL5LIB=C:\PERL\USEVOTE" in die
+autoexec.bat aufgenommen oder sonstwie ausgef¸hrt werden (Pfad
+nat¸rlich entsprechend anpassen).
+
+
+7. Wahlschein generieren
+========================
+ 
+Der Wahlschein ist ein Abschnitt des CfV, den die Leute zur Stimmabgabe
+ausfuellen und zurueckschicken sollen. Am einfachsten erzeugst Du
+diesen nach Anpassung der Konfiguration und ggfls. des Templates
+mit "uvballot.pl". Folgendes Format ist erforderlich:
+
+#1  [ Stimme ]  
+#2  [ Stimme ]
+[...]
+
+Eine zusaetzliche Beschreibung rechts daneben macht es dem Waehler
+einfacher, ist aber fuer Usevote nicht zwingend erforderlich. Wichtig
+sind nur die fortlaufenden Nummern, die entsprechend der Eintraege
+in usevote.cfg zugeordnet werden.
+
+Je nach Konfiguration koennen weitere Zeilen noetig sein, dazu spaeter.
+
+Als Stimme in den eckigen Klammern werden diverse Strings erkannt,
+die in usevote.cfg definiert werden koennen. JA, NEIN und ENTHALTUNG
+sind Standard, einige Abwandlungen sind ebenfalls moeglich.
+Zusaetzlich kann ANNULLIERUNG verwendet werden, um eine schon abgegebene
+Stimme zu loeschen und somit nicht im Result aufzutauchen.
+
+Bei der Verwendung von persoenlichen Wahlscheinen (Abschnitt 6a der
+Wahlregeln fuer de.*) ist das Vorgehen etwas anders, siehe hierzu
+den gesonderten Abschnitt weiter hinten.
+
+
+8. Stimmen verarbeiten
+======================
+
+Falls POP3 nicht benutzt werden soll (siehe usevote.cfg), werden alle
+Wahlmails zu einer Abstimmung aus einer Mailboxdatei gelesen
+(Name/Pfad der Datei in usevote.cfg einstellbar). Standardmaessig
+wird das Unix-Mailboxformat erkannt, dieses ist aber ueber "mailstart"
+in usevote.cfg konfigurierbar (bei komplett anderen Formaten muesste
+der Quellcode geaendert werden).
+
+Wechsele nun in das Verzeichnis, in dem die passenden
+Konfigurationsdateien liegen (normalerweise werden diese aus
+dem aktuellen Verzeichnis gelesen, was mehrere gleichzeitige
+Verfahren moeglich macht) und starte uvvote.pl. Bei Problemen
+mit einzelnen Stimmen wirst Du interaktiv durch Menues gefuehrt.
+Meistens gibt es folgende Moeglichkeiten, die durch die
+eingeklammerten Buchstaben und Zahlen aufgerufen werden koennen:
+
+(1) Anzeigen der Wahlmail
+
+Bestaetigen oder Aendern von Wahlschein-Eigenschaften:
+(2) Mailadresse
+(3) Waehlername
+(4) Stimmen
+(5) Scheinkennung
+(6) Datenschutzklausel
+
+(i) Diese Stimme ignorieren (ohne Benachrichtigung verwerfen)
+(w) Weiter
+
+Teilweise gibt es Unteroptionen:
+  (a) OK (Zweifel sind unbegr¸ndet, ist alles in Ordnung)
+  (b) Aendern (z.B. wenn der Realname von Usevote nicht vollstaendig
+      erkannt wurde)
+  (c) Ungueltig (es handelt sich nach Deinem Ermessen nicht um
+      eine gueltige Stimmabgabe)
+
+Nun solltest Du zunaechst mit (1) die Mail ansehen und anhand
+der bemaengelten Punkte entscheiden, ob der Wahlschein gueltig
+oder ungueltig ist bzw. welche Maengel tatsaechlich zutreffen.
+
+Mit den Optionen (2) bis (6) kannst Du einzelne Eigenschaften
+des Wahlscheins nachbessern (wenn Usevote z.B. einen Namen oder
+eine Stimme nicht korrekt erkannt hat) oder auch einfach die
+Korrektheit bestaetigen.
+
+Wenn Du alle oben auf der Seite aufgelisteten Maengel beseitigst,
+indem Du die entsprechenden Optionen waehlst, wird die Stimme
+akzeptiert. Bleiben Zweifel unausgeraeumt, wird eine entsprechende
+Fehlermail verschickt (Du erhaeltst dann noch eine gesonderte
+Warnung).
+
+Zum Schluss kannst Du (w) w‰hlen, um fortzufahren. Mˆchtest Du,
+dass eine Stimme komplett ignoriert wird (weil es sich z.B.
+um Spam handelt), kannst Du (i) waehlen und die folgende
+Sicherheitsfrage mit "JA" beantworten.
+
+Ist uvvote.pl durchgelaufen, koennen im Unterverzeichnis tmp/
+(wird ebenfalls aktuellen Verzeichnis angelegt!) die ermittelten
+Ergebnisse und erzeugten Mails an die Waehler noch einmal geprueft
+werden. Ist alles in Ordnung, werden mittels "uvvote.pl clean"
+die Mails verschickt und die Ergebnisse gespeichert sowie die
+Originalmails archiviert. Hierzu wird das Verzeichnis fertig/
+verwendet.
+
+Falls der komplette uvvote-Lauf verworfen werden soll, kann
+die Datei mit den Waehlermails (stimmen-xyz im tmp-Verzeichnis,
+xyz entspricht der aktuellen Unixtime waehrend des Durchlaufs)
+wieder an den urspruenglichen Platz zurueckkopiert werden
+(bei POP3: fuer den Neuversuch POP3 abschalten und die 
+Maildatei einlesen lassen, da auf dem Server die Mails
+moeglicherweise geloescht wurden) und das komplette tmp-Verzeichnis
+geloescht werden. Anschliessend den uvvote-Lauf erneut durchfuehren.
+Wichtig ist nur, dass das Verzeichnis fertig/ waehrend der ganzen
+Abstimmung mitsamt seines Inhaltes erhalten bleibt.
+
+Noch ein kurzes Wort zum Verschicken der Mails: Jede Mail wird
+in einer gesonderten durchnummerierten Datei (ack.1, ack.2, ...)
+gespeichert, zusaetzlich wird eine Steuerungsdatei ("ack.control")
+erzeugt, welche zu jeder Mail Dateinamen und Empfaenger auflistet.
+Je nach Einstellung werden die Mails dann per SMTP verschickt oder
+es wird ein Shellscript ("domail") erzeugt, welches nach und 
+nach die Mails in Sendmail einspeist. Zwecks Serialisierung ist
+in usevote.cfg die Einstellung "sleepcmd" konfigurierbar,
+normalerweise wird ein "sleep 1" nach jeder Mail ausgefuehrt.
+Das Verschicken der Mails (und damit ggfls. der Aufruf von "domail")
+erfolgt automatisch mit "uvvote.pl clean".
+
+Unter Windows ist nur SMTP moeglich, es sei denn, es gibt
+die Befehle sendmail, sleep und rm ;-)
+
+
+9. Unzustellbare Bestaetigungen
+===============================
+
+Leider kommt es immer mal wieder vor, dass jemand bei der Abstimmung
+eine ungueltige Mailadresse angegeben hat. In diesem Fall erhaeltst Du
+einen Bounce an die Absenderadresse zurueck (diese laesst sich in
+usevote.cfg mit der Option "envelopefrom" einstellen bzw. bei 
+direkten Aufruf eines Mailers ¸ber die entsprechende Kommandozeilenoption
+in der mailcmd-Einstellung, z.B. bei Sendmail -f). Du solltest
+solche Fehlermails in einer gesonderten Datei speichern oder in
+einem gesonderten POP3-Postfach halten und beim Erstellen
+des 2. CfVs und des Results uvbounce.pl aufrufen.
+
+Ausgegeben wird von uvbounce.pl eine Liste mit ungueltigen Adressen,
+die einfach an den Abschnitt "ungueltige Stimmen" des 2. CfVs bzw.
+Results angehaengt werden kann. Nicht vergessen, die Stimmen manuell
+aus der Liste der gueltigen Stimmen zu loeschen (falls Du die
+Policy verfolgst, nur Stimmen mit gueltiger Absenderadresse zu werten,
+was empfehlenswert ist) und bei Bedarf das Ergebnis zu korrigieren!
+
+
+10. 2.CfV / Result
+===================
+
+Zum Erstellen des 2. CfVs kannst Du erst einmal den 1. CfV als Vorlage
+benutzen. Am Ende sollte allerdings eine Liste der Personen folgen,
+die bereits abgestimmt haben. Diese laesst sich mit "uvcount.pl -l"
+erzeugen. Moeglicherweise fragt uvcount.pl wegen scheinbar doppelter
+Stimmabgaben nach und bietet an, eine oder beide Stimmen zu ignorieren.
+Du solltest das dann genauer untersuchen und die passende Wahl treffen.
+
+Vorsicht bei doppelten Namen: Es gibt einige doppelt vorkommende
+Namen, hinter denen sich voellig unterschiedliche Personen
+verbergen! Die Mailadresse sollte in solchen Faellen Auskunft
+geben koennen, notfalls einmal nachfragen.
+
+Das Endergebnis kannst Du mit "uvcount.pl -r" ausgeben lassen.
+Bei Verfahren mit mehreren Abstimmungspunkten wird automatusch
+das folgende tabellarische Format verwendet:
+
+ Ja  Nein : 2/3? >=60? : ang.? : Gruppe
+==== ==== : ==== ===== : ===== : =======================================
+ 100   70 : Nein   Ja  :  Nein : Einrichtung von xyz
+
+Bei Abstimmungen ueber nur einen Punkt gibt es auch die Moeglichkeit,
+einen einfachen beschreibenden Text zu verwenden:
+"Es gab 100 JA und 70 NEIN-Stimmen ...".
+
+Falls in usevote.cfg die Einstellung "multigroup = 1" gesetzt ist,
+wird immer die tabellarische Form gewaehlt, bei "multigroup = 0"
+benutzt uvcount.pl bei nur einem Abstimmungspunkt den beschreibenden
+Text. ‹berschreiben laesst sich dieses mit Aufrufparametern:
+
+uvcount.pl -r -m     = Tabellarisch (m = multigroup)
+uvcount.pl -r -o     = Text (o = onegroup)
+
+Falls in usevote.cfg die Option "proportional = 1" aktiviert ist,
+wird standardmaessig folgendes Ausgabeformat angewandt:
+
+ Ja  Nein : J>=N? Ja/Nein : ang.? : Gruppe
+==== ==== : ===== ======= : ===== : ====================================
+ 100   70 :  Ja    1.429  :       : Einrichtung von abc
+  80   90 : Nein   0.888  :       : Einrichtung von xyz
+
+Das genaue Aussehen ist im Template "result-proportional" aenderbar,
+die Bedingungen und Auswertungsformeln sind ueber usevote.cfg
+einzustellen (prop_formula und condition1). Die Spalte "ang.?" muss
+in diesem Fall manuell ausgef¸llt werden, da manchmal auch mehrere
+Abstimmungsgegenst‰nde angenommen werden, z.B. bei Moderationsnachwahlen
+f¸r verschiedene Posten.
+
+Die Waehlerliste mit abgegebenen Stimmen erzeugst Du mit
+"uvcount -v". Diese Option laesst sich auch mit -r kombinieren,
+so dass Du Dir das doppelte Aussortieren von Duplikaten sparst.
+Wichtig: Diese Liste darf erst im Result veroeffentlicht werden,
+nicht im 2. CfV!
+
+Falls ein trivialer Schutz vor Spammern gewuenscht ist, koennen durch
+eine Aenderung in den Template "voterlist", "votes-single", "votes-multi"
+und "bouncelist" alle Mailadressen verfremdet werden. Entweder Du fuegst
+folgende Definition ein:
+
+mail            := value mail | replace '@' ' -at - '
+
+Oder Du veraenderst direkt die vorgegebenen Formate, indem Du
+die Mailadresse mit Hilfe des Pipe-Symbols durch die replace-Funktion
+schickst:
+
+multi-line := value mail | replace '@' ' -at- ' | justify-behind name 72
+
+Die Replace-Funktion erwartet wie im Beispiel gezeigt zwei Werte,
+die zu ersetztende Zeichenfolge (hier das '@') und eine neue Zeichenfolge,
+die statt dessen eingesetzt werden soll und frei gewaehlt werden kann.
+
+Wie bereits beschrieben, sollte am Ende des 2. CfVs bzw. Results noch die
+Liste der gebouncten Mailadressen angehaengt werden (z.B. mit dem Programm
+uvbounce.pl) und bei Bedarf die urspruenglichen Stimmen geloescht und das
+Ergebnis korrigiert werden.
+
+
+11. Datenschutz
+===============
+
+Zum Schutz der deutschen Wahlleiter wurden spezielle Klauseln
+aufgenommen, die vom Waehler die Erlaubnis zur Verarbeitung
+der Stimme verlangen. Die Option "bdsg" in usevote.cfg schaltet
+diese Sonderbehandlung ein oder aus. Folgende Besonderheiten
+gelten bei Aktivierung:
+
+- Im Wahlschein ist ein spezieller Hinweistext enthalten, der
+  aus der Datei bdsgtext.cfg genommen wird. Beim Verarbeiten
+  abgegebener Stimmen wird der Abschnitt wieder mit der Datei
+  verglichen. Fehlt er oder wurde er veraendert, wird der
+  Wahlschein dem Wahlleiter zur Kontrolle vorgelegt.
+  Die Fehlerpruefung ignoriert Quote- und Leerzeichen sowie
+  Zeilenumbrueche, kann aber versagen, wenn dem Quotezeichen
+  Initialen vorangestellt sind (wie in manchen Mailboxnetzen
+  ueblich) oder eine Silbentrennung ueber den Text gelaufen ist.
+
+- Ausserdem enthaelt der Wahlschein eine spezielle Frage,
+  die mit JA zu beantworten ist. Anderenfalls muss ebenfalls
+  Kontrolle durch den Wahlleiter erfolgen. Der Text dieser
+  Frage ist ueber usevote.cfg einzustellen.
+
+Erfolgt eine derartige Kontroll-Vorlage beim uvvote.pl-Lauf,
+sollte der Wahlleiter sich den Wahlschein genau anschauen
+und dann entweder im Menue die Option (6)(a) waehlen oder
+mit (w) fortfahren. Im letzteren Fall wird die Stimme
+verworfen und eine Hinweismail zurueckgeschickt.
+
+Wenn eine Wahlbestaetigung veraendert und zurueckgeschickt
+wird, fehlt der entsprechende Datenschutzhinweis. Da in
+diesem Fall die Zustimmung aber bereits bei der ersten
+Stimmabgabe gegeben wurde, kann der Wahlleiter beruhigt
+die Korrektheit wie oben beschrieben bestaetigen.
+
+
+12. Personalisierte Wahlscheine
+===============================
+
+Die Wahlregeln fuer de.* sehen im Abschnitt 6a ein Verfahren
+mit persoenlichen Wahlscheinen vor, die mit einer speziellen
+Kennung versehen mehr Sicherheit vor Manipulation bieten.
+
+Um dieses Verfahren einzuschalten, muss zunaechst die Option
+"personal = 1" in usevote.cfg gesetzt werden und das Template
+"ballot-personal" im Unterverzeichnis "templates" um den Text
+des CfVs erweitert werden (einfach statt des von Sternchen
+umrandeten Kommentars in der Datei einfuegen). Bitte eventuell
+im Text vorkommende eckige Klammern wie folgt unschaedlich
+machen: \[Text\] (Backslash voranstellen), da in den Templates
+diese Klammern spezielle Bedeutungen haben (siehe gesonderten
+Abschnitt zu dem Thema in dieser Datei).
+
+Der gepostete CfV enthaelt i.d.R. nur einen Dummy-Abschnitt
+mit Hinweis auf die gesonderte Wahlscheinanforderung. So ein
+Abschnitt kann mit uvballot.pl generiert werden.
+
+Der dana-Moderation sollte beim Einreichen des CfVs auch
+ein Dummy-Wahlschein mitgesendet werden, wie er bei der
+Wahlscheinanforderung verschickt wird. Dieser laesst sich mit
+"uvcfv.pl -t" erzeugen.
+
+Die eingehenden Wahlscheinanforderungen sollten an eine
+spezielle Mailadresse gehen und dann mit uvcfv.pl verarbeitet
+werden. Je nach Konfiguration in usevote.cfg werden die
+Mails aus einer Mailboxdatei oder per POP3 eingelesen und jeweils
+mit einem personalisierten Wahlschein beantwortet. Bitte vor
+dem Posten des CfVs einen Test durchfuehren, um sicherzustellen,
+dass die generierten Wahlscheine korrekt sind und auch bei
+der Auswertung akzeptiert werden (hierbei wird die speziell
+eingefuegte Wahlscheinkennung in Verbindung mit der Absenderadresse
+geprueft).
+
+
+13. Die einzelnen Programme
+===========================
+
+uvballot.pl
+  Generiert den Wahlschein fuer den CfV. Bei personalisierten
+  Wahlscheinen (personal = 1 in usevote.cfg) wird nur ein Dummy-
+  Abschnitt mit Hinweisen zur Wahlscheinanforderung ausgegeben.
+
+  Die Vorlage fuer den Wahlschein ist im templates-Unterverzeichnis
+  konfigurierbar:
+  - ballot               Standard-Wahlschein (personal=0)
+  - ballot-request       Dummy-Abschnitt mit Hinweisen zur
+                         Wahlscheinanforderung (personal=1)
+  - ballot-personal      Wahlschein mit Scheinkennung, wird von
+                         uvcfv.pl verwendet
+
+  Aufrufparameter:
+
+  -c config_file         liest die Konfiguration aus config_file
+                         (usevote.cfg falls nicht angegeben)
+  -h                    
+  --help                 zeigen einen Hilfetext an
+
+
+uvbounce.pl
+  Liest Bounces aus den uebergebenen Dateien oder aus einer POP3-
+  Mailbox ein (Verhalten haengt von usevote.cfg ab) und generiert
+  eine Liste von unzustellbaren Adressen, die an den 2. CfV oder das
+  Result angehaengt werden kann. Falls POP3 in usevote.cfg
+  eingeschaltet und die Option -f (siehe unten) nicht benutzt wurde,
+  werden die uebergebenen Dateinamen ignoriert.
+
+  Die Vorlage fuer die ausgegebene Liste ist im templates-
+  Unterverzeichnis konfigurierbar (Datei "bouncelist").
+
+  Aufrufparamter:
+
+  -c config_file         liest die Konfiguration aus config_file
+  -f dateiname(n)   
+  --file dateiname(n)    lesen die Bounces aus den uebergebenen Dateien,
+                         auch wenn in der Konfigurationsdatei POP3
+                         eingeschaltet ist. Diese Option wird benoetigt,
+                         falls zwar die Stimmzettel per POP3 eingelesen
+                         werden sollen, nicht aber die Bounces.
+                         Die Dateinamen werden durch Leerzeichen getrennt.
+  -h
+  --help                 zeigen einen Hilfetext an
+
+
+uvcfv.pl
+
+  Liest Mailboxen ein und beantwortet alle Mails mit personalisierten
+  CfVs (falls personal=1 in usevote.cfg).
+
+  Die Vorlage fuer die ausgegebene Liste ist im templates-
+  Unterverzeichnis konfigurierbar (Datei "ballot-personal").
+
+  Aufrufparamter:
+
+  -c config_file        liest die Konfiguration aus config_file
+                        (usevote.cfg falls nicht angegeben)
+  -t
+  --test                gibt einen Dummy-Wahlschein mit Scheinkennung
+                        an der Standardausgabe aus, zur Pruefungszwecken
+  -h
+  --help                zeigen einen Hilfetext an
+
+
+uvcount.pl
+
+  Zaehlt Stimmen und gibt Waehlerlisten aus. Dient zur Erstellung
+  von 2.CfV und Result.
+
+  Es werden die folgenden Vorlagen aus dem templates-Unterverzeichnis
+  benutzt:
+
+  - result-multi       Ergebnisauszaehlung bei mehreren Gruppen
+  - result-single      Ergebnisauszaehlung bei nur einem Abstimmungs-
+                       gegenstand (nicht tabellarisch, sondern im
+                       Fliesstext), falls in usevote.cfg multigroup=0
+                       gesetzt ist oder die Option -o verwendet wird
+                       (siehe unten)
+  - voterlist          Reine Auflistung der bisherigen Waehler ohne
+                       Stimmen (fuer 2. CfV)
+  - votes-multi        Stimmenliste im Mehrgruppenformat (eine Liste
+                       mit allen Waehlern, rechts daneben die jeweils
+                       abgegebenen Stimmen)
+  - votes-single       Stimmenliste im Eingruppenformat (getrennte
+                       Listen mit Ja-, Nein- und Enthaltungsstimmen)
+
+  Aufrufparamter:
+
+  -c config_file      liest die Konfiguration aus config_file
+                      (usevote.cfg falls nicht angegeben)
+  -f result_file      liest die Stimmen aus result_file (ueberschreibt
+                      die "resultfile"-Angabe aus der Konfigurationsdatei)
+  -l
+  --list              Geben eine Liste aller Waehler aus (ohne Stimmen).
+  -v
+  --voters            Wie --list, aber mit Angabe der abgegebenen Stimmen.
+  -r
+  --result            Ausgabe des Endergebnisses (kann mit --list oder
+                      --voters kombiniert werden).
+  -m
+  --multigroup        Benutzt auch bei Eingruppenabstimmungen das
+                      Mehrgruppenformat beim Endergebnis (ueberschreibt
+                      die Einstellung aus usevote.cfg).
+                      Nur in Kombination mit --result verwendbar,
+                      schliesst --onegroup aus.
+  -o
+  --onegroup          Benutzt bei Eingruppenabstimmungen immer das
+                      Eingruppenformat beim Endergebnis (ueberschreibt
+                      die Einstellung aus usevote.cfg).
+                      Nur in Kombination mit --result verwendbar,
+                      schliesst --multigroup aus.
+  -n
+  --nodup             Verzichtet auf das Aussortieren von doppelten
+                      Stimmabgaben. Nicht empfohlen!
+  -h
+  --help              zeigen einen Hilfetext an
+
+
+
+uvvote.pl
+
+  Liest Mailboxen aus einer Datei oder per POP3 ein wertet die Mails
+  als Stimmzettel aus. Erst beim Aufruf mit der Option "clean" werden
+  die Ergebnisse endgueltig gespeichert und die Bestaetigungsmails
+  verschickt.
+
+  Es werden diverse Vorlagen aus dem templates-Unterverzeichnis
+  benutzt, um Bestaetigungs- und Fehlermails zu generieren.
+
+  Aufrufparameter:
+
+  -c config_file       liest die Konfiguration aus config_file
+                       (usevote.cfg falls nicht angegeben)
+  -t
+  --test               fuehrt einen Test der Konfiguration durch und
+                       gibt das ermittelte Ergebnis aus.
+  -h
+  --help               zeigen einen Hilfetext an
+
+
+
+14. Die Konfigurationsdateien
+=============================
+
+mailpatterns.cfg
+----------------
+
+Diese Datei enthaelt einen regulaeren Ausdruck (Perl-Syntax) pro
+Zeile. Passt die Mailadresse eines Abstimmenden auf eines der Muster,
+wird dem Wahlleiter bei der Auswertung eine Warnung angezeigt.
+In der Regel kann man diese ignorieren, weil heutzutage viele
+Privatleute ihre eigene Domain haben und Role-Accounts wie news@
+benutzen. Sieht man aber so etwas wie news@t-online.de ist
+Vorsicht angebracht und man sollte durch Auswahl von "(W)eiter" 
+die Stimme ungueltig werten und eine entsprechende Fehlermail
+zurueckschicken lassen.
+
+
+messages.cfg
+------------
+
+Hier sind alle kuerzeren Texte enthalten, die Usevote ausgibt,
+unabhaengig davon, ob sie nur dem Wahlleiter bei der Programmausfuehrung
+ausgegeben werden oder in persoenlichen Mails bzw. dem Result
+auftauchen. Laengere Textpassagen sind als eigene Dateien im
+"templates"-Verzeichnis zu finden und bieten weitergehende
+Formatierungsmoeglichkeiten.
+
+Jede Zeile in der messages.cfg besteht aus einem Identifier, einem
+Gleichheitszeichen und dem eigentlichen Text. Der Identifier ist
+grundsaetzlich in Grossbuchstaben gehalten und vom Programmcode fest
+vorgegeben. Aenderungen duerfen nur rechts vom Gleichzeichen vorgenommen
+werden, wenn Dir z.B. Formulierungen nicht gefallen oder Du anders-
+sprachige Ausgaben haben moechtest.
+
+Variablen sind ueber ${VARIABLE} einzubauen, allerdings sind die
+Variablennamen und deren Inhalte vom Programmcode vorgegeben und
+sollten beibehalten werden. Es gibt keine vordefinierten Variablen,
+die Du selbst einbauen kannst, es sei denn, Du erweiterst den
+Programmcode an der entsprechenden Stelle.
+
+Die einzigen Texte, die fest im Programmcode stehen, sind die
+Hilfetexte der einzelnen Programme (ueber die Option -h oder --help
+aufrufbar) sowie die Startmeldungen (Copyright etc.) und initiale
+Fehlermeldungen (usevote.cfg oder messages.cfg nicht gefunden,
+ungueltige oder falsch kombinierte Aufrufparameter).
+
+
+usevote.rul
+-----------
+
+Mit dieser Datei koennen spezielle Regeln fuer eine gueltige Stimmabgabe
+bei Mehrgruppenabstimmungen erstellt werden, z.B. dass man Punkt 3 oder 4
+waehlen muss, wenn man fuer Punkt 2 gestimmt hat (quasi als weitergehende
+Auswahlmoeglichkeit). Solche Regeln verkomplizieren aber die Abstimmung
+und sollten nur in Ausnahmefaellen benutzt werden. Urspruenglich gedacht
+war diese Moeglichkeit z.B. fuer .misc Gruppen, die zwangsweise bei einer
+Aufteilung mit angelegt werden mussten. Dadurch, dass das in den
+Wahlregeln fuer de.* als Automatismus eingebaut ist, kann man sich
+so etwas meistens sparen. Fuer den Fall, dass bei einer vorgeschlagenen
+neuen Gruppe der Name noch unklar ist, gibt ebenfalls das Benutzen
+von speziellen Wahlregeln wenig Sinn, da man auch eine Meinung ueber
+den Gruppennamen haben kann, wenn man eigentlich gegen die Gruppe ist.
+
+Wenn Du aber ein Verfahren betreust, in dem Du solche Sonderregeln
+benoetigst, kannst Du eine Regel pro Zeile in der folgenden Syntax schreiben:
+
+if .jjjjj then J....
+
+Eine Regel beginnt immer mit "if", und danach folgen eine Anzahl Symbole;
+diese Anzahl muss gleich der Anzahl der Gruppen sein, ueber die abgestimmt
+wird. Oben geht es also um eine Abstimmung ueber sechs Gruppen.
+Die Symbole hinter "if" geben an, in welchem Fall diese Regel Anwendung
+finden soll. Falls sie zutrifft, wird die Bedingung hinter "then"
+geprueft (dort muessen nochmal so viele Symbole folgen, wie Gruppen
+im Wahlschein vorkommen). Ist diese Bedingung nicht erfuellt, wird
+der Wahlschein dem Wahlleiter als regelverletzend vorgelegt, und
+wenn diese mit "(w)eiter" den Fehler bestaetigt, wird eine entsprechende
+Fehlermeldung zurueckgeschickt und die Stimme als ungueltig gewertet.
+
+Folgende Symbole sind erlaubt:
+
+   J   eine JA-Stimme
+   N   eine NEIN-Stimme
+   E   eine Enthaltung
+   S   eine JA- oder NEIN-Stimme
+   H   eine Enthaltung oder JA-Stimme
+   I   eine Enthaltung oder NEIN-Stimme
+   .   egal (Ja, nein oder Enthaltung)
+   j   eine oder mehrere der markierten Gruppen hat JA-Stimme
+   n    ""   ""    ""     ""     ""       ""    ""  NEIN-Stimme
+   e    ""   ""    ""     ""     ""       ""    ""  Enthaltung
+   s    ""   ""    ""     ""     ""       ""    ""  Ja- oder Nein-Stimme
+   h    ""   ""    ""     ""     ""       ""    ""  Enthaltung oder Ja-Stimme
+   i    ""   ""    ""     ""     ""       ""    ""  Enthaltung oder Nein-Stimme
+
+Hier noch ein Beispiel:
+    if S... then .ss.
+    if .S.. then ..E.
+    if ..S. then .E..
+
+Diese Regeln sagen: Wer fuer die erste Gruppe abstimmt, der muss auch
+fuer die zweite und dritte Gruppe abstimmen - egal wie. Ausserdem muss er
+(Regeln 2 und 3) sich bei 3 enthalten, wenn er bei 2 eine Stimme abgibt
+und umgekehrt. Die vierte Gruppe wird hier gar nicht betroffen.
+
+
+usevote.cfg
+-----------
+
+Dieses ist die zentrale Konfigurationsdatei fuer Usevote. Einige
+Einstellungen sind nur einmal auf das System und Deine Gewohnheiten
+anzupassen, andere muessen fuer jede Abstimmung geaendert werden.
+Alle Einstellungen sind mit mehr oder weniger sinnvollen
+Standardwerten vorgegeben, die sich bei leerer usevote.cfg mittels
+"uvvote.pl -t" ermitteln lassen.
+
+Es lassen sich durch eine Zeile "include dateiname" weitere 
+Konfigurationsdateien einbinden. Die Stelle, an der dieses geschieht,
+ist dabei wichtig, da die usevote.cfg von oben nach unten gelesen
+wird (zus‰tzlich eingebundene Konfigurationsdateien werden an der
+Stelle der "include"-Zeile eingef¸gt) und bei mehrmals vorkommenen
+Optionen der jeweils letzte gesetzte Wert benutzt wird.
+Daher sollte eine Datei mit systemweiten Defaults am besten am
+Anfang der usevote.cfg eingebunden werden, die dort gesetzten
+Optionen sollten aber unbedingt aus der usevote.cfg geloescht werden,
+damit die systemweiten Einstellungen nicht gleich wieder ueberschrieben
+werden.
+
+Das Format ist allgemein:
+
+Option = Wert
+
+Der Wert muss in manchen Faellen 0 (=aus) oder ungleich 0 (=an) sein,
+in anderen Faellen muss eine exakte Zahl oder Zeichenkette eingegeben
+werden. 
+
+Alles, was hinter einem # Zeichen steht, wird als Kommentar gewertet
+und ignoriert. Steht hinter einem Wert so ein Kommentar, wird
+normalerweise alles bis zum Kommentarzeichen noch in den String
+einbezogen. In so einem Fall sollte der Wert von Anfuehrungszeichen
+umschlossen werden. Im folgenden Beispiel wird ein Dateiname
+definiert:
+
+# Der Dateiname endet mit 10 Leerzeichen (bis zum Kommentarzeichen):
+tpl_mailheader = mailheader          # Kommentar
+
+# Der Dateiname enthaelt keine Leerzeichen, da mit Anfuehrungsstrichen
+# begrenzt:
+tpl_mailheader = "mailheader"        # Kommentar
+
+Folgt kein Kommentar in der selben Zeile, koennen die Anfuehrungsstriche
+weggelassen werden.
+
+Hier eine Auflistung der immer anzupassenden Optionen
+(BOOL bedeutet, dass 0 (aus) oder 1 (an) eingetragen werden muss):
+
+votename         Name der Abstimmung
+group1           Erster Abstimmungsgegenstand
+group2           Zweiter (und so weiter durchnummerieren)
+votefile         Mailbox mit eingehenden Stimmen (falls POP3 ausgeschaltet)
+personal         Personalisierte Wahlscheine verwenden? [BOOL]
+                 (siehe gesonderten Abschnitt weiter oben)
+voteaccount      Mailadresse, unter der abgestimmt werden kann
+                 (Reply-To im CfV auf diese Adresse setzen)
+requestfile      Datei mit Anforderungsmails bei "personal=1", falls
+                 POP3 ausgeschaltet ist
+bdsg             Datenschutzklausel generieren und auf deren Existenz 
+                 pruefen? [BOOL] (siehe gesonderten Abschnitt weiter oben)
+replyto          Reply-To Header auswerten? [BOOL] (nicht empfohlen und in
+                 de.* von den GVV nicht praktiziert)
+voteack          Jede Stimme mit einer Bestaetigungsmail beantworten? [BOOL]
+                 (in de.* so ueblich)
+mailcc           weitere Mailadresse, an die eine Kopie jeder Bestaetigungs-
+                 oder Fehlermail geschickt wird (fuer Archivzwecke)
+onestep          Mails direkt verschicken und Ergebnisse speichern? [BOOL]
+                 ("uvvote clean" Aufruf entfaellt)
+multigroup       Fuer das Ergebnis auch bei Eingruppenabstimmung des
+                 Mehrgruppenformat waehlen? [BOOL]
+condition1       Bedingungen fuer einen Erfolg der Abstimmung in Perl-Syntax
+condition2       (normalerweise "$yes>=2*$no" und "$yes>=60"
+resultfile       Datei fuer Gesamtergebnis (normalerweise ergebnis.alle)
+idfile           Datei mit Scheinkennungen (bei "personal=1")
+pop3             POP3 benutzen? [BOOL] (andernfalls Stimmen aus Datei lesen)
+pop3server       POP3-Server fuer eingehende Wahlscheine
+pop3port         POP3-Serverport (normalerweise 110)
+pop3user         Benutzername
+pop3pass         Passwort
+pop3delete       Mails nach Abruf vom Server loeschen? [BOOL]
+pop3uidlcache    Dateiname zum Speichern bereits abgerufener Mail-IDs (UIDL)
+pop3*_req        entsprechende Optionen fuer Mailbox mit eingehenden
+                 Wahlscheinanforderungen (bei "personal=1")
+pop3*_bounce     entsprechende Optionen fuer Mailbox mit Bounces (Fehlermails)
+                 fuer die Verarbeitung durch uvbounce.pl
+smtp             SMTP zum Verschicken von Mails benutzen? [BOOL]
+                 Andernfalls wird direkt an den MTA uebergeben (nur Unix)
+smtpserver       SMTP-Server
+smtpport         SMTP-Serverport (normalerweise 25)
+smtpauth         SMTP-Authentication nach RFC 2554 benutzen? [BOOL]
+smtpuser         SMTP-Benutzername
+smtppass         SMTP-Passwort
+smtphelo         String fuer die HELO-Greeting bei SMTP (Default: Hostname)
+fqdn             String fuer den Host-Teil der Message-ID
+                 (Fully Qualified Domain Name) (Default: Hostname)
+archivedir       Verzeichnis fuer Archivierung von verarbeiteten Stimmen
+tmpdir           temporaeres Verzeichnis
+templatedir      Verzeichnis mit Templates (Vorlagen) fuer diverse Zwecke
+                 (normalerweise "templates", dort liegen bereits vordefinierte
+                 Templates, die i.d.R. nicht angepasst zu werden brauchen)
+formats          Konvertierungsfunktionen fuer die Templates, mit Komma getrennt
+                 (mitgelieferte UVformats.pm muss hier aufgefuehrt werden,
+                 desweiteren koennen eigene Module mit weiteren Funktionen
+                 hier eingebunden werden)
+controlfile      Name der Steuerungsdatei fuer den Mailversand (tmp/ack.control)
+domailfile       Name des Shellscripts zum Versenden der Bestaetigungsmails
+                 (falls smtp=0, normalerweise tmp/domail)
+mailcmd          Aufruf des Mail Transfer Agents (MTA) zum Verschicken der
+                 Bestaetigungsmails (falls smtp=0), z.B.
+                 "sendmail -oi -oem -femail@adresse"
+sleepcmd         Weiteres Kommando, welches nach jeder Mail aufgerufen werden
+                 soll (falls smtp=0). Sinnvoll ist ein "sleep x", wobei x bei
+                 langsamen Systemen hoeher gewaehlt werden sollte.
+clearcmd         Shellbefehl zum Loeschen des Bildschirms (Standard: clear),
+                 muss unter Windows auf "cls" geaendert werden. Falls Shell
+                 oder Betriebssystem keinen solchen Befehl bereitstellen,
+                 sollte ein Kommando verwendet werden, welches eine Trennlinie
+                 oder aehnliches auf dem Bildschirm ausgibt, z.B. mit "echo"
+pager            Shellbefehl zum seitenweisen Darstellen von Mails auf dem
+                 Bildschirm (normalerweise "less"). Unter Windows muss "more"
+                 benutzt werden, unter Unix hingegen gibt es moeglicherweise
+                 bei "more" Probleme mit der Umleitung von STDERR in eine Datei
+                 (wie es z.B. von uvvote.pl benoetigt wird), daher ist "less"
+                 der Standardwert.
+mailfrom         Absender fuer den From-Header der Bestaetigungsmails. Wird
+                 auch in Bestaetigungsmails als Unterschrift eingefuegt und
+                 sollte daher am besten in folgendem Format sein:
+                 Vorname Nachname <gvv@foo.bar>
+                 (ohne Anfuehrungsstriche, falls rfc-konform moeglich)
+envelopefrom     Absender fuer den Envelope (Return-Path) der Bestaetigungsmails
+                 bei Verwendung von SMTP (bitte nur die Adresse eintragen, ohne
+                 Klammern und Zusaetze). Wenn SMTP ausgeschaltet ist, muss
+                 diese Einstellung entsprechend der Mailer-Doku in "mailcmd"
+                 gesetzt werden (z.B. bei Sendmail und kompatiblen mit -f)
+messagefile      Datei mit diversen Meldungen und Textfragmenten (messages.cfg)
+rulefile         Datei mit Wahlregeln (usevote.rul)
+badaddrfile      Datei mit verdaechtigen Mailadressen (mailpatterns.cfg)
+errorfile        Datei fuer Fehlermeldungen beim Programmlauf (errors.log)
+mailstart        Einleitungszeile fuer naechste Mail (RegExp), falls Mails
+                 aus einer Datei eingelesen werden (smtp=0), normalerweise
+                 "^From"
+begin_divider    Trennlinien vor und nach dem Wahlschein
+end_divider      ("Alles vor/nach dieser Zeile bitte loeschen")
+nametext         Text fuer die Namens-Angabe im Wahlschein. Muss im
+                 Wahlschein genauso stehen und wird beim Standardtemplate
+                 auch aus dieser Einstellung uebernommen. Beispieltext:
+                 "Dein Realname, falls nicht im FROM-Header:"
+nametext2        Text fuer Namens-Angabe in Bestaetigungsmails
+                 (dito, Standardwert "Waehlername:")
+addresstext      Text fuer die Adress-Angabe im Wahlschein
+                 (dito, Standardwert "Waehleradresse:")
+ballotidtext     Text f¸r die Angabe der Wahlscheinkennung (falls personal=1)
+                 (dito, Standardwert "Wahlscheinkennung:")
+bdsgtext         Text fuer Datenschutzklausel (falls bdsg=1),  erscheint als
+                 Abstimmungspunkt (z.B. "Datenschutzklausel - Zustimmung: Ich
+                 bin mit der Verarbeitung meiner Daten wie oben beschrieben
+                 einverstanden")
+bdsgfile         Datei mit Erklaerungstext fuer BDSG-Klausel (bdsgtext.cfg)
+rightmargin      Zeilenbreite bei Ausgaben, die nicht durch Templates
+                 gesteuert werden. Hat vor allem auf Bildschirmausgaben
+                 Auswirkung.
+name_re          Regulaerer Ausdruck fuer Erkennung eines gueltigen Realnamens.
+                 Beispiel: "[a-zA-Z‰ˆ¸·‡‚ÈËÍÌÏÓÛÚÙ˙˘˚ƒ÷‹¡¡¬…» ÕÃŒ”“‘⁄Ÿ€ﬂ-]{2,} +
+                 .*[a-zA-Z‰ˆ¸·‡‚ÈËÍÌÏÓÛÚÙ˙˘˚ƒ÷‹¡¡¬…» ÕÃŒ”“‘⁄Ÿ€ﬂ]{2,}"
+                 (muss ohne Umbruch in eine Zeile)
+
+Regulaere Ausdruecke fuer Erkennung der Stimmen
+(Gross-/Kleinschreibung spielt keine Rolle):
+
+ja_stimme        Standardwert: (J\s*A|J|(D\s*A\s*)?F\s*U\s*E\s*R)
+nein_stimme      Standardwert: (N\s*E\s*I\s*N|N|(D\s*A\s*)?G\s*E\s*G\s*E\s*N)
+enth_stimme      Standardwert: (E|E\s*N\s*T\s*H\s*A\s*L\s*T\s*U\s*N\s*G)
+ann_stimme       Standardwert: A\s*N\s*N\s*U\s*L\s*L\s*I\s*E\s*R\s*U\s*N\s*G
+
+Definition der verwendeten Templatedateien
+(werden im Unterverzeichnis "templates" mitgeliefert):
+
+tpl_mailheader      "mailheader"         # generally used mail header
+tpl_bouncelist      "bouncelist"         # used by uvbounce.pl
+tpl_result_multi    "result-multi"       # used by uvcount.pl -r -m
+tpl_result_single   "result-single"      # used by uvcount.pl -r -o
+tpl_votes_multi     "votes-multi"        # used by uvcount.pl -v (multiple groups)
+tpl_votes_single    "votes-single"       # used by uvcount.pl -v (single group only)
+tpl_voterlist       "voterlist"          # used by uvcount.pl -l (2nd CfV)
+tpl_ballot          "ballot"             # used by uvballot.pl (personal = 0)
+tpl_ballot_request  "ballot-request"     # used by uvballot.pl (personal = 1)
+tpl_ballot_personal "ballot-personal"    # used by uvcfv.pl    (personal = 1)
+tpl_addr_reg        "address-not-registered"  # used by uvvote.pl   (personal = 1)
+tpl_no_ballotid     "no-ballotid"        # used by uvvote.pl   (personal = 1)
+tpl_wrong_ballotid  "wrong-ballotid"     # used by uvvote.pl   (personal = 1)
+tpl_bdsg_error      "bdsg-error"         # used by uvvote.pl   (bdsg = 1)
+tpl_ack_mail        "ack-mail"           # used by uvvote.pl   (voteack = 1)
+tpl_cancelled       "cancelled"          # used by uvvote.pl
+tpl_invalid_account "invalid-account"    # used by uvvote.pl
+tpl_invalid_name    "invalid-name"       # used by uvvote.pl
+tpl_multiple_votes  "multiple-votes"     # used by uvvote.pl
+tpl_no_ballot       "no-ballot"          # used by uvvote.pl
+tpl_no_votes        "no-votes"           # used by uvvote.pl
+tpl_rule_violated   "rule-violated"      # used by uvvote.pl  (siehe usevote.rul)
+
+
+15. Templates
+=============
+
+Die mitgelieferten Templates befinden sich im Verzeichnis "templates".
+In usevote.cfg koennen weitere Verzeichnisse definiert werden, in
+denen auch nach Templates gesucht wird ("templatedir", kommaseparierte
+Liste mit Verzeichnissen). Auﬂerdem koennen dort die Dateinamen der einzelnen
+Templates eingestellt werden, wodurch es moeglich ist, in einzelnen
+Abstimmungen andere, selbst definierte Templates zu verwenden, die in
+einem gesonderten Verzeichnis abgelegt sind.
+
+Eine Templatedatei besteht aus zwei Teilen. Am Anfang werden die
+Formatierungen bestimmter Schluessel definiert und nach einem Trenner
+folgt der eigentlich Template-Koerper, der dann von Programm bearbeitet
+und ausgegeben wird.
+
+   format-key := function1 param | function2 param
+
+   == TEMPLATE ====================================
+
+   Ich bin nun das eigentliche Template:
+
+   format-key: [$format-key]
+
+Der Trenner beginnt mit den Zeichen '== TEMPLATE' danach koennen beliebige
+Zeichen folgen um die beiden Sektionen optisch voneinander abzugrenzen.
+
+Wenn es keine Formatierungsanweisungen gibt, kann der Trenner auch
+weggelassen werden. D.h. wenn kein Trenner gefunden wird, wird der
+komplette Text als Template-Koerper betrachtet.
+
+
+Template-Koerper
+----------------
+
+Im Template-Koerper werden die zu ersetzenden Token durch eckige
+Klammern abgegrenzt. Sollen eckige Klammern im Text ausgegeben werden,
+muessen diese durch einen Backslash freigestellt werden.
+
+   [$termersetzung] [@schleife] nur eine \[ Klammer
+
+
+Termersetzung:
+
+    Ersetzt den Token durch den Wert des angegeben Schluessels:
+
+      [$formatierung] [$schluessel]
+
+    Es wird zuerst nach einer Formatierung mit den entsprechenden
+    Bezeichner gesucht. Ist diese vorhanden, werden die entsprechenden
+    Funktionen ausgefuehrt (siehe folgender Abschnitt).
+
+    Kann kein Format gefunden werden, wird direkt in der im Programmcode
+    gefuellten Datenstruktur nach einem Schluessel mit dem angegeben
+    Bezeichner gesucht und sein Wert eingesetzt. Alle Einstellungen
+    aus der usevote.cfg sind automatisch als Schluessel definiert, es
+    kann also z.B. [$nametext] jederzeit verwendet werden. Eingesetzt
+    wird an der Stelle der mit "nametext = " definierte Text aus
+    usevote.cfg.
+
+    Schlussendlich ist es noch moeglich einen default-Wert zu
+    definieren, der eingesetzt wird, wenn keiner der obigen Wege
+    erfolgreich war:
+
+      Hallo [$name|Unbekannter]!
+
+    Diese Zeile gibt, wenn kein Name definiert wurde, das Wort
+    "Unbekannter" aus.
+
+
+Bedingte Verzeigung:
+
+    Ueberprueft ob der Wert des angegebenen Formats/Schluessel boolsch
+    WAHR ist. Dementsprechend wird der then oder else Block eingefuegt:
+
+      [?if|then|else] oder auch nur [?if|then]
+
+    Die then/else Bloecke werden natuerlich auch auf Tokens geparst und
+    diese dementsprechend ersetzt.
+
+
+Schleifen/Listen:
+
+    Der nachfolgende Textblock wird fuer alle Elemente des durch den
+    Schluessel bezeichneten Arrays ausgefuehrt und eingefuegt.
+
+      [@schluessel|block] oder [@schluessel|block|sep]
+
+    Als zweiter Parameter kann ein Separtor definiert werden, mit dem
+    sich z.B. kommaseparierte Listen erzeugen lassen, da der Separator
+    eben nur zwischen den Elementen eingefuegt wird.
+
+    Auch fuer Schleifen koennen Formatierungen genutzt werden.Allerdings
+    darf kein String zurueckgegeben werden, sondern ein Array mit einer
+    Menge von UVtemplate-Objekten.
+
+
+Kommentare:
+
+    Token die nach der Bearbeitungen entfernt werden:
+
+       [# mich sieht man nicht]
+
+
+Sonstiges:
+
+    Um in Listen einen Zeilenumbruch zu erzwingen, muss lediglich ein
+    '\n' eingefuegt werden, falls eine kompakte Definition der Liste
+    erfolgen soll.
+
+       [@names|[name] [email]\n]
+
+
+Formatierungen
+--------------
+
+Eine Formatierung besteht eigentlich nur aus dem entsprechenden
+Namen und einer beliebigen Anzahl von Funktionsaufrufen:
+
+   format := funktion param1 "param 2" | funktion param
+
+Aehnlich der Unix-Shell-Funktionalitaet, wird dabei die Ausgabe
+einer Funktion an die folgende weitergeleitet. So ist es moeglich,
+verschiedenste simple Formatierungen zu kombinieren um nicht fuer
+jeden Spezialfall eine neue Funktion schreiben zu muessen.
+
+Die jeweilige Formatierungsfunktion erhaelt als Input die
+Datenstruktur, den Output der vorherigen Funktion und die definierten
+Parameter in der entsprechenden Reihenfolge.  
+
+Zahlen und einfache Bezeichner koennen direkt definiert werden.
+Sollen Sonderzeichen oder Leerzeichen uebergeben werden, muessen
+diese gequotet werden. Dazu kann ' oder " verwendet werden.
+
+Die Funktionen geben im Allgemeinen einen String zurueck. Im Rahmen
+von Listen kˆnnen auch Arrays uebergeben werden.
+
+Die erste Funktion duerfte ueblicherweise 'value' sein. Sie gibt
+den Wert des angegeben Schluessel zurueck, der dann von den
+folgenden Funktionen definiert wird:
+
+   name-60 := value name | fill-right 60
+
+Das Format "name-60" definiert also den Wert des Schluessel "name",
+der um Leerzeichen aufgefuellt wird, bis eine Laenge von 60 Zeichen
+erreicht wird.
+
+   name-email := value name | justify-behind mail 72
+
+"name-email" resultiert in einem String, der zwischen den Werten von
+"name" und "email" genau so viele Leerzeichen enthaelt, damit der
+gesamte String 72 Zeichen lang ist.
+
+Wird dieses Format in einer Liste angewandt, erhaelt man eine Tabelle
+in der die linke Spalte linksbuendig und die rechte Spalte
+entsprechend rechtsbuendig ist.
+
+Soweit ein kleiner Ueberblick ueber die Formatierungen. Ausfuehrliche
+Funktionsbeschreibungen und weitere Beispiele finden sich in der
+POD-Dokumentation des Moduls UVformat ("perldoc UVformat.pm").
+
+Es ist moeglich, selbst eigene Module mit Formatierungsfunktionen
+zu schreiben und ueber die Option "formats" in usevote.cfg einzubinden.
+Am besten kann dazu UVformats.pm als Vorlage genommen werden.
+Wichtig: der Name einer Formatierungsfunktionen darf nur aus
+Gross- und Kleinbuchstaben, Zahlen und Minuszeichen bestehen.
+Unterstriche, Punkte etc. sind nicht erlaubt!
+
+Falls eine elementare Funktion fehlt, kannst Du Dich auch gerne
+bei mir melden und ich pruefe, wie sie sich einbauen laesst.
+
+Marc Langer, im Oktober 2005

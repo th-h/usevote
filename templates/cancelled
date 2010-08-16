@@ -1,0 +1,12 @@
+votetaker       := value mailfrom | fill-left 65
+
+== TEMPLATE =================================================================
+Diese automatische Nachricht wurde dir nach Erhalt Deiner ANNULLIERUNG
+zugesandt. Jede vorherige Stimmabgabe in dieser Abstimmung ist dadurch
+annulliert und wird weder gezaehlt noch veroeffentlicht.
+
+Wenn dies ein Fehler war und du doch waehlen moechtest, musst du erneut
+abstimmen.
+
+[$votetaker]
+\[mit [$usevote_version]\]

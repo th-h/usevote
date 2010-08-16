@@ -1,0 +1,10 @@
+multi-line 	:= value name | justify-before mail 72
+bouncetext      := value bouncetext | create-lines 72
+
+== TEMPLATE =================================================================
+
+Als ungueltig erkannte Stimmen:
+------------------------------------------------------------------------
+[@bounces|[$multi-line]
+[@bouncetext|[$line]]|\n]
+

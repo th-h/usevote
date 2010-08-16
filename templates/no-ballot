@@ -1,0 +1,16 @@
+votetaker       := value mailfrom | fill-left 65
+body            := value body     | quote "> "
+
+== TEMPLATE =================================================================
+In deiner Mail wurde kein gueltiger Wahlschein gefunden. Bitte lies die
+Hinweise im Call for Votes (CfV) und stimme nochmal ab.
+Dieser Fehler tritt meistens dann auf, wenn du Zeilen loeschst, die du
+laut CfV nicht haettest loeschen sollen.
+
+Hier die Mail, die ich erhalten habe:
+
+[$body]
+
+
+[$votetaker]
+\[mit [$usevote_version]\]

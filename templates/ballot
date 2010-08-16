@@ -1,0 +1,34 @@
+votename-first  := value votename | first-words 55
+votename-more   := value votename | drop-words 55 | create-lines 55
+
+pos             := value pos | fill-right 2
+
+group-first 	:= value group | first-words 50 
+group-more  	:= value group | drop-words 50 | create-lines 50
+
+bdsginfo        := value bdsginfo | create-lines 72
+bdsgtext-first  := value bdsgtext | first-words 50
+bdsgtext-more   := value bdsgtext | drop-words 50 | create-lines 50
+
+== TEMPLATE =================================================================
+
+=-=-=-=-=-=-=-=- Alles vor dieser Zeile bitte loeschen =-=-=-=-=-=-=-=-
+
+WAHLSCHEIN fuer [$votename-first]
+[@votename-more|                [$line]\n]
+
+
+[$nametext]
+
+Wenn du keinen Real-Namen angibst, wird deine Stimme fuer
+ungueltig erklaert werden.
+
+
+Nr   \[Deine Stimme\]  Gruppe/Abstimmungsgegenstand
+========================================================================
+[@groups|#[$pos]  \[            \]  [$group-first]
+[@group-more|                     [$line]\n]|\n]
+[?bdsg|[@bdsginfo|[$line]|\n]\n\n#a   \[            \]  [$bdsgtext-first]
+[@bdsgtext-more|                     [$line]|\n]]
+
+=-=-=-=-=-=-=-=- Alles nach dieser Zeile bitte loeschen =-=-=-=-=-=-=-=-

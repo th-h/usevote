@@ -1,0 +1,23 @@
+votetaker       := value mailfrom | fill-left 65
+head            := value head     | quote "> "
+body            := value body     | quote "> "
+
+== TEMPLATE =================================================================
+Die Wahlscheinkennung, die du in deinem Wahlschein benutzt hast,
+entspricht nicht der Kennung, die beim Wahlleiter fuer deine EMail-
+Adresse registriert ist, bitte benutzte die Wahlscheinkennung
+aus deinem persoenlichen Wahlschein.
+
+Solltest du wirklich eine andere Wahlscheinkennung zugeschickt
+bekommen haben (oder du hast gar keinen Wahlschein angefordert),
+so setzte dich bitte mit mir in Verbindung.
+
+Hier die Mail, die ich erhalten habe:
+
+[$head]
+>
+[$body]
+
+
+[$votetaker]
+\[mit [$usevote_version]\]

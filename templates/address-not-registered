@@ -1,0 +1,25 @@
+votetaker       := value mailfrom | fill-left 65
+head            := value head     | quote "> "
+body            := value body     | quote "> "
+
+== TEMPLATE =================================================================
+Deine Adresse ist beim Wahlleiter bisher nicht mit einer Wahlschein-
+kennung registriert, mit einer EMail an die im CfV genannten Adresse
+kannst du dir eine Kennung zuteilen lassen.
+
+Solltest du bereits eine Kennung erhalten haben, so achte bitte darauf,
+diese nur mit genau der Mailadresse zu verwenden, fuer die sie
+registriert ist.
+
+Achtung, die Mailadresse wird unter Beachtung von Gross- und Klein-
+schreibung ausgewertet, Meier und meier sind daher _nicht_ identisch!
+
+Hier die Mail, die ich erhalten habe:
+
+[$head]
+>
+[$body]
+
+
+[$votetaker]
+\[mit [$usevote_version]\]

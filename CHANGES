@@ -1,0 +1,484 @@
+UseVoteGer Versionshistorie (aktuelle Version: 4.09, released 07.10.2007)
+=========================================================================
+
+TODO:
+- aussortieren von Bounces aus Stimmenliste
+- Unterstuetzung von Maildir
+- [Zugschlus] ich fänd es klasse, wenn man eine Kopie des Wahlscheines ins
+Abstimmungsverzeichnis legt und Usevote einem dann auf Abruf ein diff
+oder wdiff zwischen Sollwahlschein und wirklich eingreichtem
+Wahlschein macht. Auf diese Weise erwischt man auch kleine Änderungen
+am Datenschutzhinweis (da bin ich eben in eine Falle von th-h getappt).
+
+
+Version 4.09 (14.09.2007):
+- "votefile"-Option in usevote.cfg an passendere Stelle verschoben und
+  den Kommentar korrigiert (natuerlich gilt pop3=0 als Bedingung, nicht
+  etwa wie vorher angegeben smtp=0)
+- Fehler in Template für Ergebnisausgabe korrigiert (fehlendes Newline
+  nach umgebrochenen Abstimmungspunkten)
+- Fehler in Doku der Kommandozeilenoptionen von uvcount.pl behoben
+  (--voters statt --votes)
+- Date-Header in Englisch erzeugen (statt in eingestellter locale)
+  (verwendet nun Modul Email::Date)
+- Message-ID-Header selbst erzeugen
+
+Version 4.08 (06.10.2005):
+- beim Ignorieren von Regelverletzungen (im Menue mit "Stimmen OK" bestaetigt)
+  wird jetzt keine (dann ja unangebrachte) Fehlermail mehr verschickt.
+- neuer Buchstabe I bzw. i in usevote.rul, der auf NEIN und ENTHALTUNG matcht.
+  Damit lässt sich eine Stichwahl realisieren, bei der nur für eine von
+  zwei Möglichkeiten mit JA gestimmt werden darf und im anderen Feld entweder
+  NEIN oder ENTHALTUNG (bzw. garnichts, was Enthaltung enspricht)
+  eingetragen werden muss.
+- analog neuer Buchstabe H bzw. h für JA/ENTHALTUNG, der Vollstaendigkeit halber
+- uvvote.pl sortiert die Liste der Ergebnisdateien jetzt vorm Zusammenfuegen
+  zur neuen ergebnis.alle, so dass die Reihenfolge auf jeden Fall stimmt,
+  auch wenn das System die Dateien unsortiert liefert
+- wenn uvcount.pl in der ergebnis.alle auf eine falsche Anzahl von Abstimmungspunkten
+  bei einer Stimme trifft (z.B. versehentlich Leerzeichen oder Buchstabe 
+  am Ende einer Zeile zuviel, wenn manuell editiert wurde), bricht es ab und
+  weist auf die fehlerhafte Stimme hin. Vorher wurde das als weiterer
+  Abstimmungspunkt gezählt.
+- Doku ergänzt: "envelopefrom" bezieht sich nur auf SMTP, ansonsten muss
+  das in "mailcmd" konfiguriert werden
+- Bug bei Eingruppenmodus behoben: Es wurde immer das selbe ausgegeben,
+  unabhaengig vom Ergebnis (keine 60 Stimmen, keine 2/3 Mehrheit)
+
+Version 4.07 (26.09.2004):
+- wenn "nodup=1" gesetzt war, wurden auch keine Annullierungen aussortiert.
+  Ausserdem wurde ansonsten der Wahlleiter unnoetig gefragt, welche
+  Stimme aussortiert werden soll, auch wenn letztlich beide annulliert
+  waren (die Annullierung aber erst spaeter eingegangen war).
+  Um diese Fehler zu beheben, wurde ein zusaetzlicher Verarbeitungsschritt
+  in uvcount.pl eingefuehrt, der sich nur um Annullierungen kuemmert und
+  die gleich am Anfang verarbeitet.
+- es ist jetzt auch moeglich, nach einer Annullierung mit derselben
+  Mailadresse nochmal abzustimmen. Vorher wurde so eine Stimmabgabe
+  durch die vorher erfolgte Annullierung mit erfasst
+- Template result-proportional korrigiert. Es kam zu Darstellungsfehlern
+  bei umgebrochenen Gruppennamen/Wahlgegenstaenden (falsche Einrueckung,
+  falscher Umbruch)
+- Formatfunktion 'generate-date-header' fuer Templates eingefuehrt
+- Template 'mailheader' um Date-Header ergaenzt
+- chomp auf Message-ID nur noch machen, wenn eine Message-ID vorhanden ist
+  (gibt sonst Warnung wegen undef)
+- wenn die Option "mailcc" gesetzt ist, wurden die Hochkommata in der
+  domail-Datei (siehe Changelog von Version 4.06) um beide Adressen gesetzt.
+  Jetzt wird in einer Schleife jede Adresse einzeln gequotet.
+- RegEx fuer Realnamenserkennung um den Bindestrich erweitert, damit
+  Doppelnamen anerkannt werden
+
+Version 4.06 (18.06.2004):
+- Es werden nun "In-Reply-To:" und "References:" Header in den
+  generierten Mails erzeugt
+- beim Schreiben des domail-Scripts (Verschicken von Mails ohne SMTP)
+  wurde ein fehlerhafter Zeilenumbruch eingefuegt
+- Leerzeichen am Zeilenende in der usevote.cfg hatten dazu geführt,
+  dass Einstellungen nicht korrekt eingelesen wurden. Jetzt werden
+  beim Einlesen der Konfiguration solche Leerzeichen gelöscht (außer
+  wenn der Teil rechts vom Gleichzeichen durch Anführungsstriche umschlossen
+  ist)
+- Mailadresse und Waehlername werden jetzt korrekt zurueckgesetzt, so
+  dass bei fehlendem From-Header nicht noch die Daten der vorherigen Mail
+  in den Variablen stehen
+- Mailadresse wird nun in Hochkommata eingeschlossen, wenn sie in die
+  "domail"-Datei geschrieben wird (bei smtp=0 in usevote.cfg), damit
+  Shell-Metazeichen nicht beim Ausfuehren des MTA interpretiert und damit
+  die Mailadresse veraendert bzw. potentiell schaedlicher Code ausgefuehrt
+  wird
+- Es ist jetzt moeglich, bei der Warnung "Es wurden nicht alle Fehler behoben,
+  der Waehler wird eine Fehlermail erhalten" zurueck ins Menue zu gehen
+  und die Fehler doch noch zu beheben
+- in uvcfv.pl (Verschicken von personalisierten Wahlscheinen) einige
+  Bugs behoben [warum hatte das ueberhaupt so funktioniert? Schroedinger
+  laesst gruessen.] und den Hinweistext "Wahlschein wurde bereits einmal
+  zugeschickt" aus dem Perlcode in das Template ballot-personal verlagert
+- mittels "uvcfv.pl -t" laesst sich jetzt ein personalisierter
+  Dummy-Wahlschein ausgeben (wenn "personal=1" in usevote.cfg), um ihn
+  vorab der dana-Moderation zur Pruefung zukommen lassen zu koennen
+
+Version 4.05 (27.12.2003):
+- Aendern von Mailadressen oder Namen im Menue fuehrte zu "keine Scheinkennung"
+  Fehlern, auch wenn die personalisierten Wahlscheine nicht aktiviert waren
+  (personal=0 in usevote.cfg). 
+- Fehler beim Verarbeiten von Mailbox-Files behoben. In den letzten
+  Versionen funktionierte nur POP3.
+- In Wahlschein-Templates "kann fuer ungueltig erklaert werden" in
+  "wird fuer ungueltig erklaert werden" geaendert (bei falschem Realname)
+- kosmetische Aenderungen in Templates (Anpassung an neue Rechtschreibung,
+  Entfernung von Umlauten fuer einheitliches Schriftbild)
+
+Version 4.04 (22.11.2003):
+- uvcount.pl: Fehler beim Aussortieren von Duplikaten behoben, was
+  i.d.R. nur bei doppelten Mailadressen, nicht aber bei doppelten Namen
+  funktionierte (falsche Regular Expression und Probleme bei
+  unterschiedlicher Gross-/Kleinschreibung der Namen)
+
+Version 4.03 (19.10.2003):
+- UVsendmail.pm: Vernuenftige Fehlerbehandlung bei SMTP implementiert:
+  Bei fehlgeschlagenen Zustellversuchen wird jetzt die Datei ack.control
+  passend neu geschrieben, so dass mit "uvvote.pl clean" ein neuer
+  Versuch unternommen werden kann. Vorher wurde zwar eine Fehlermeldung
+  angezeigt, die Mail aber einfach geloescht...
+- es wird kein Fehler mehr angezeigt, wenn ack.control bereits existiert,
+  da der Code durchaus damit umgehen kann (es wird einfach an die
+  Datei angehaengt). Entsprechende Fehlermeldung aus messages.txt
+  entfernt
+- Schreibfehler in messages.cfg behoben (ggf. statt ggfls.)
+- me@privacy.net in mailpatterns.cfg aufgenommen
+- UIDLs werden jetzt in der Reihenfolge gespeichert, in der die
+  Mails auf dem POP3-Server lagen. Dadurch ist bei einem Abbruch
+  waehrend der Auswertung leichter kontrollierbar, welche Mails noch
+  einmal abgerufen werden sollen (einfach die letzten X UIDLs aus
+  der Datei uidlcache loeschen)
+- uvcfv.pl, uvbounce.pl und uvvote.pl besitzen jetzt einen Locking-
+  Mechanismus, der ein gleichzeitiges bzw. mehrfaches Starten dieser
+  Programme unterbindet. Andernfalls koennte es zu Inkonsistenzen
+  im Datenbestand kommen (gleichzeitiger Abruf derselben Mailbox,
+  Auswertung noch nicht fertig geschriebener Ergebnisdateien)
+- es koennen jetzt zusaetzliche Konfigurationsdateien in usevote.cfg
+  eingebunden werden, um z.B. die immer gleichen Einstellungen nur
+  einmal zentral abzulegen. Hierzu einfach eine Zeile
+  include dateiname
+  einfuegen. Die Position ist wichtig: Bei mehrfacher Definition
+  der selben Option gilt die letzte. Daher sollte eine globale
+  Konfigurationsdatei am Anfang eingebunden werden, um die
+  Einstellungen bei Bedarf mit wahlspezifischen ueberschreiben zu
+  koennen
+
+Version 4.02 (31.05.2003):
+- UVpath.pm wieder entfernt, da mittlerweile eine bessere Loesung
+  gefunden: Das Modul FindBin wird eingesetzt, um den Pfad der
+  ausgefuehrten .pl Datei zu ermitteln. Wenn die .pm Dateien im selben
+  Verzeichnis liegen, werden sie dort gefunden. Ausserdem wurde der
+  Hinweis auf die Umgebungsvariable PERL5LIB in die README Datei
+  aufgenommen, die ansonsten auch auf den Pfad zu den Usevote-Perlmodulen
+  gesetzt werden kann.
+
+Version 4.01 (29.05.2003):
+- Wahlschein-, Result- und Bestaetigungsmail-Templates angepasst, so dass
+  bei langem "votename" ein Umbruch im Wahlschein erfolgt und auch bei einer
+  zweistelligen Anzahl von Wahlgegenstaenden eine buendige Ausgabe erfolgt
+- uvballot.pl und Template "result-multi" angepasst, so dass bei
+  Mehrgruppenabstimmungen die Anzahl der Enthaltungen nicht ausgegeben
+  wird (laesst sich nicht als Gesamtzahl ermitteln, koennte man hoechstens
+  fuer jede Gruppe einzeln angeben)
+- Es brauchen jetzt nur noch die Konfigurationsdateien sowie die
+  UVpath.pm in einem Abstimmungsverzeichnis zu liegen, die .pl und .pm
+  Dateien koennen zentral fuer mehrere Abstimmungen abgelegt werden.
+- Formatierungsfunktion "replace" in UVformats.pm implementiert, mit
+  deren Hilfe die Ersetzung von Zeichen oder Zeichenketten in Templates
+  moeglich ist. Praktische Anwendung ist z.B. die Verfremdung von
+  Mailadressen im Result als trivialer Spamschutz. Wie die Templates
+  dafuer geaendert werden muss, ist in der README Datei im Abschnitt 10
+  beschrieben
+- Bei den Standard-Funktionen append und justify (inkl. justify-before
+  und justify-behind) wird der uebergebene Key jetzt rekursiv ueber die
+  Formatdefinitionen im Template aufgeloest. Das ermoeglicht die
+  Vorbehandlung eines Wertes, z.B.:
+    mail := value mail | replace '@' '-at-'
+    line := value name | justify-before mail 70
+  Hier wurde vorher die unveraenderte Mailadresse benutzt, jetzt wird
+  die obere Definition beachtet und zunaechst die Ersetzung durchgefuehrt.
+- Formatierungsfunktion "sprintf" in UVformats.pm implementiert, um
+  z.B. Verhaeltnisse in Results formatiert ausgeben zu koennen
+- Auswertung nach Verhaeltnis Ja- zu Nein-Stimmen implementiert
+  (in usevote.cfg proportional=1 setzen und prop_formula passend waehlen).
+  Damit ist z.B. fuer jeden Abstimmungsgegenstand das Verhaeltnis oder
+  auch die Differenz zwischen Ja- und Nein-Stimmen ermittelbar. Letzteres
+  wird fuer Moderationsnachwahlen benoetigt. Kombiniert werden kann dies
+  mit einer weiteren Bedingung, z.B. mindestens soviele Ja- wie Nein-Stimmen.
+
+Version 4.0 (22.03.2003):
+- UVformats.pm dokumentiert
+- Defaultwert fuer "formats" korrigiert (UVconfig.pm)
+- Defaultwert fuer "bdsgfile" fehlte (UVconfig.pm)
+- kosmetische Aenderung (fehlende Leerzeichen) an Template result-multi
+- Windows-Pager-Empfehlung in README und usevote.cfg geaendert (vorher
+  wurde "more" empfohlen, da mitgeliefert, aber more ist so buggy, dass
+  jetzt die Installation von "less" nahegelegt wird
+- Fehler in UVsendmail.pm behoben: Wenn beim "uvvote.pl clean" Aufruf keine
+  Mails zu verschicken waren, wurde das Programm in UVsendmail::send()
+  einfach mit "exit 0" beendet (korrigiert in "return 0"). Ausserdem
+  wurde die Fehlermeldung wegen eines Schreibfehlers im Konstantennamen
+  nicht angezeigt.
+
+Version 4.0beta15:
+- Fehlermeldung bei nicht vorhandener messages.cfg korrigiert
+  (Dateiname wurde wegen falschen Configschluessels nicht angezeigt)
+- Bei manuell eingegebener Scheinkennung wurde irrtuemlicherweise eine
+  Fehlermeldung angezeigt, auch wenn die Kennung zur Mailadresse passte
+- Bei neu eingegebener Mailadresse wurde die Zugehoerigkeit der
+  Scheinkennung nicht neu geprueft
+- bei nicht erkannten Abstimmungspunkten im Wahlschein wurde eine
+  Warnmeldung angezeigt, die auf Nicht-Wertung hinwies. In Wirklichkeit
+  wurde die Stimme aber normal bestaetigt und lediglich alle nicht erkannten
+  Punkte als "Enthaltung" gewertet. Die Warnmeldung erscheint jetzt nicht
+  mehr, um keine Verwirrung zu stiften.
+- Fehler in UVmessage.pm behoben: Der Wert 0 wurde durch den leeren String
+  ersetzt. Jetzt wird defined() eingesetzt statt auf true/false zu pruefen.
+- Fehler in UVsendmail.pm behoben: Wenn kein SMTP aktiviert war, wurde
+  die "domail" Datei mit den MTA-Aufrufen zwar geschrieben, aber nicht
+  ausgefuehrt. Dadurch schlug auch das Loeschen der Temp-Dateien fehl,
+  was beim naechsten Aufruf Fehlermeldungen verursachte.
+- Templates eingebaut
+- acktext.txt durch Templates ersetzt. BDSG-Text ist jetzt in der
+  Datei bdsgtext.cfg
+- "cfvfile" Option entfernt (nicht mehr noetig, durch Templates abgeloest)
+- Bedingungen fuer Wahlerfolg ueber usevote.cfg konfigurierbar gemacht.
+  Standardwerte:
+  condition1 = $yes>=2*$no
+  condition2 = $yes>=60
+- usevote.cfg bzgl. der Ueberschriften "jedes Mal anpassen" / "nur einmal
+  anpassen" ein wenig umsortiert
+- wenn kein "smtphelo" definiert wurde, wird jetzt der eigene
+  Hostname genommen
+- README an aktuelle Aenderungen angepasst (Dateilisten, Beschreibungen
+  der Menues) und vervollstaendigt
+
+Version 4.0beta14:
+- Fehler in UVmenu.pm behoben, der beim Auswaehlen von
+  "Stimmen vom Waehler annulliert" im Menue auftrat
+- Erkennung von doppelten, sich widersprechenden Stimmabgaben in einer
+  Mail funktioniert jetzt
+- beim Verschicken per SMTP gibt es die neue Option envelopefrom, die
+  die Absenderadresse im Envelope (Return-Path) enthaelt, an die auch
+  Bounces zurueckgehen
+- Neu: Erkennung von fehlenden Abstimmungspunkten im Wahlschein, Behandlung
+  wie bei unleserlichen Stimmabgaben mit entsprechendem Hinweis im Menue
+- Fehler in uvvote.pl behoben, der bei unleserlichen Stimmabgaben auftrat
+- statt encode_mimewords wird jetzt encode_mimeword verwendet und das
+  "Drumherum" komplett selbst gemacht. Man schaue in den Code von
+  MIME::Words::encode_mimewords(), dann weiss man, warum ;-)
+- Weitere Texte in messages.txt ausgelagert (uvvote.pl, uvcount.pl)
+- config test (-t Option) gibt jetzt auch Auskunft ueber die Konfiguration
+  (falls Option nicht in usevote.cfg gesetzt, wird der Standardwert
+  ausgegeben)
+
+Version 4.0beta13:
+- Fehlerbehandlung bei SMTP eingefuehrt, so dass keine Mails verloren gehen
+- es laesst sich jetzt ein anderer Port fuer SMTP/POP3 angeben
+- uvbounce.pl benutzt jetzt auch POP3, falls dieses in usevote.cfg aktiviert
+  wurde. Mit der Option -f ist aber unabhaengig davon das Einlesen der
+  Bounces aus einer Datei in jedem Fall moeglich
+- auftretende Fehler beim Ausfuehren von uvvote.pl werden jetzt in eine
+  Datei geschrieben und beim Verlassen wird darauf hingewiesen
+- Wenn das interaktive Menue ausgeblendet und dazu der Bildschirm geloescht
+  wird, informiert jetzt eine Meldung darueber, dass Mails verarbeitet werden
+- Menues so umgestellt, dass [a] immer fuer "alles OK" steht, egal ob
+  Mailadresse, Name, Stimmen oder die BDSG-Klausel strittig sind
+- Ausgaben/Texte von UVreadmail.pm und UVsendmail.pm nach messages.txt
+  ausgelagert
+- Verzeichnisnamen "fertig" und "tmp" jetzt konfigurierbar
+- Zeilen "Waehleradresse: " und "Wahlscheinkennung: " im Wahlschein
+  konfigurierbar gemacht
+- Pager konfigurierbar gemacht (vorher immer "more") und standardmaessig
+  auf "less" gesetzt, weil "more" mit der Umleitung von STDERR Probleme hat
+- kleinere Bugs behoben
+
+Version 4.0beta12:
+- Fehler in Menue behoben
+- im Menue kann man jetzt explizit Stimmen ungueltig werten, indem man
+  den Namen, die Adresse oder die Stimmen ungueltig macht. Es wird eine
+  passende Fehlermail generiert.
+- genauso kann man jetzt explizit annullieren (sinnvoll, falls der Waehler
+  z.B. "annullierung" falsch buchstabiert hat *g*), wobei automatisch
+  diverse andere Probleme als irrelevant erkannt werden (z.B. braucht man
+  in dem Fall keinen Datenschutzhinweis zu akzeptieren und nicht unbedingt
+  einen Namen anzugeben, falls die Adresse stimmt)
+- MIME-Kodierung fuer Subject- und From-Header in UVsendmail.pm eingefuehrt
+- In Bestaetigungsmails gibt es jetzt kein gesondertes Feld mehr zum
+  Korrigieren des Namens, sondern es kann einfach die ohnehin vorhandene
+  Zeile "Wahlername: Vorname Nachname" editiert werden.
+- "nametext2" in usevote.cfg ist jetzt "Waehlername:" und wird auch
+  statt des fest kodierten Strings an den entsprechenden Codestellen
+  verwendet
+- uvcount.pl: Bugs bei Annullierungen und fehlendem Namen behoben
+- uvbounce an geaendertes UVreadmail.pm angepasst (funktioniert bei
+  Aktivierung des POP3-Zugriffs nicht mehr)
+- saemtliche Ausgaben/Texte in UVmenu.pm nach messages.txt ausgelagert
+
+Version 4.0beta11:
+- kompletter Rewrite der Ueberpruefungsfunktionen in uvvote.pl und UVmenu.pl.
+  Es werden jetzt alle Fehler an ein Array angehaengt und in einem Rutsch
+  von der Menue-Funktion verarbeitet. Fuer Darstellung der Votemail wird
+  "more" benutzt.
+
+Version 4.0beta10:
+- Zeilenumbrueche richten sich jetzt nach der "rightmargin"-Einstellung
+  aus usevote.cfg (vorher waren die Zeilenlaengen teilweise noch hartkodiert)
+- Fehler beim Erstellen des domail-Scripts behoben
+- kosmetische Code-Aenderungen
+
+Version 4.0beta9:
+- Auch bei zurueckgeschickten (korrigierten) Wahlbestaetigungen wird
+  jetzt der Name automatisch im Body erkannt (Zeile "Waehlername:").
+- Regular Expressions zur Stimmerkennung geaendert: Manche komische
+  Mailprogramme benutzen zum Kodieren von Leerzeichen =A0, was aber
+  nach der Dekodierung nicht als \s erkannt wird. \W ist nicht optimal,
+  aber funktioniert.
+- uvbounce.pl: Bounces von Antworten auf Wahlscheinanforderungen werden
+  jetzt erkannt und mit einem gesonderten Hinweis gekennzeichnet
+  ("Wahlschein nicht zustellbar")
+- in den Config Files koennen die Kommentarzeichen escaped werden: \#
+
+Version 4.0beta8:
+- beim Einlesen aus usevote.cfg wird ein eventuelles \r geloescht
+- es werden nicht mehr jedes Mal saemtliche Mails abgerufen (bei POP3),
+  sondern es wird mit dem UIDL Kommando geprueft, ob schon ein vorheriger
+  Abruf stattfand. Ausserdem ist es jetzt moeglich, die Mails vom Server
+  zu loeschen.
+- uvcfv.pl kann jetzt auch richtig mit POP3 umgehen
+- Platzhalter im Wahlschein bei personalisierten Wahlscheinen geaendert
+- Aktuelle Werte werden teilweise jetzt im Menue angezeigt (wenn man
+  Stimmen, Name oder Mailadresse neu gesetzt hat)
+- Dokumentation verbessert
+
+Version 4.0beta7:
+- kosmetische Code-Aenderungen (Vereinfachungen, Verschoenerungen, ...)
+- Inhalt der Datei bdsgtext.txt als Abschnitt [BDSG Hinweis] in
+  acktext.txt uebernommen (es gibt keinen Grund dafuer, dass dieser
+  Text eine eigene Datei bekommen sollte...)
+- Testweise einige Programm-Meldungen in externe Datei (meldungen.cfg)
+  ausgelagert, um eine leichtere Anpassung zu ermoeglichen (z.B.
+  Uebersetzung in andere Sprachen). Nach und nach werden saemtliche
+  Meldungen in diese Konfigurationsdatei wandern.
+- acktext.txt in acktext.cfg umbenannt: Alle Konfigurationsdateien
+  haben damit die Endung .cfg
+- POP3-Abruf und Verschicken per SMTP eingebaut
+- Shellbefehl-Aufrufe (chmod- und mkdir) durch Perl-Pendants ersetzt,
+  um Plattformunabhaengigkeit zu bieten
+- In uvcfv.pl Doppelung im Mailsubject geloescht
+- In uvcount.pl stimmte die Zuordnung von Abstimmungsgegenstand zur
+  einzelnen Stimmabgabe nicht (umgekehrte Reihenfolge)
+- in UVmenu.pm entstand bei Mehrgruppenabstimmungen der Kommentar
+  "Wahlleiter setzte Stimmen, Stimmen, Stimmen" (jetzt nur noch
+  einmal gesetzt statt fuer jede Gruppe)
+- Falls keine Scheinkennung und keine BDSG-Zustimmung: Bislang wurden
+  dann zwei Mails generiert (keine Abfrage auf bereits aufgetretenen
+  Fehler), nun behoben
+
+Version 4.0beta6:
+- RegExp fuer Namensangabe im Body verbessert (wenn kein Name angegeben
+  wurde und auch im Header keiner zu finden war, wurde der nachfolgende
+  Hinweissatz "Wenn Du keinen Namen angibst..." als Realname erkannt
+- RegExp fuer Namenserkennung konfigurierbar gemacht (usevote.cfg)
+  und um Accents erweitert
+- RegExp fuer Erkennung verdaechtiger Adressen trifft jetzt nur noch
+  zu, wenn der String direkt am Anfang der Adresse steht. Gegenteiliges
+  Verhalten kann durch Wildcards herbeigefuehrt werden
+- Statt manuellen Trennens von Header und Body wird in UVreadmail.pm
+  jetzt das Modul MIME::Parser eingesetzt
+- kleinere Bugs behoben (z.B. einfache vs. doppelte Anfuehrungsstriche)
+- Fehler bei UVmenu::menu-Aufruf im Falle von "keine Stimmen" behoben
+  (eine Variable fehlte in der Uebergabeliste)
+- uvcount.pl um Eingruppen-Format ergaenzt
+- uvballot.pl um Option -t ergaenzt, um eine Vorlage fuer cfv.txt bei
+  Verwendung von personalisierten Wahlscheinen zu erzeugen
+- uvbounce.pl zur Generierung von ungueltigen Adressen aus einer
+  Mailbox mit Bounces implementiert
+- Bei Annullierungen wird jetzt nicht mehr die BDSG-Klausel geprueft
+  (es erfolgt ja ohnehin eine Loeschung der Stimmabgabe)
+- Statt Mail::Field wird nun eine eigene RegExp verwendet (Danke an
+  Marc Brockschmidt fuer die Idee), Mail::Field hat einige unschoene Bugs.
+- Bei nicht erkannten Stimmabgaben bei Abstimmungen mit nur einem
+  Abstimmungsgegenstand wird nun auch die Ungueltigwertung angeboten
+  (als Alternative zu "Enthaltung").
+
+Version 4.0beta5:
+- die Mailboxdatei wird nun vor der Verarbeitung verschoben, so dass waehrend
+  des uvvote-Laufs keine neuen Mails angehaengt werden koennen
+- es wird jetzt fuer jeden Durchlauf eine gesonderte Ergebnisdatei angelegt
+- neu eingefuehrter Parameter "clean", der Bestaetigungen verschickt,
+  Ergebnisdatei und die Mailbox in das Verzeichnis fertig/ verschiebt,
+  temporaere Dateien loescht und aus allen Einzelergebnissen eine neue
+  Gesamtergebnisdatei (normalerweise "ergebnis.alle") erstellt
+- dadurch sind jetzt zwei Durchgaenge erforderlich: Erster Aufruf ohne
+  die Option "clean" (Erzeugt die Ergebnisse und Mailvorlagen), dann kann
+  eine Kontrolle erfolgen, anschliessend ein weiterer Aufruf mit der Option
+  "clean" zum Aufraeumen und Verschicken der Bestaetigungen
+- neues Modul UVsendmail.pm, in das die Funktion zum Erstellen von
+  Mails ausgelagert wurde
+- neues Modul UVmenu.pm mit der Menuefunktionalitaet zum interaktiven
+  Eingriff in die Stimmwertung
+- Bugs bei Stimmaufzeichnung behoben: Fehlerhafte Stimmen wurden teilweise
+  nicht in der Ergebnisdatei vermerkt. Ausserdem wurde nicht konsequent
+  auf die Option "voteack" geprueft
+- Reply-To kann jetzt beachtet werden (muss in usevote.cfg eingeschaltet
+  werden) und ueberschreibt das From. Mit Vorsicht zu geniessen, da so
+  jeder Waehler fuer andere Stimmen abgeben und die Bestaetigungen zu
+  sich umlenken kann!
+- Umgang mit personalisierten Wahlscheinen (Abschnitt 6a der Wahlregeln
+  fuer de.*), Generierung und Pruefung von Scheinkennungen. Siehe Optionen
+  "personal" und "idfile" in usevote.cfg sowie das Programm uvcfv.pl zum
+  Verschicken der persoenlichen Wahlscheine
+- Das Flag beim Aufruf der Menuefunktion ist jetzt ein Hash, in dem
+  diverse Werte ueber- und zurueckgegeben werden. Dadurch auch feine
+  Steuerung der aktiven Menuepunkte moeglich
+- Ausgabe der Fehlermeldung in UVmenu.pm verlagert (wird in besagtem
+  Hash uebergeben)
+- Kommentarfeld fuer Ergebisdatei ("Wahlleiter setzte xyz") wird erst
+  zum Schluss erzeugt, vorher werden nur die vom Wahlleiter manuell
+  veraenderten Felder in einem Array mitgefuehrt
+- uvcfv.pl zum Generieren der persoenlichen Wahlscheine und Verschicken
+  des CfVs implementiert
+- Bisherige Funktionalitaet von uvack, uvcount, uvdup in uvcount.pl
+  implementiert
+- uvballot.pl zum Erstellen eines Musterwahlscheins
+- uvcfv.pl: Es wird nun auch die Vollstaendigkeit von $config{bdsgtext}
+  im Wahlschein geprueft und bei Auswahl von "Ende+Speichern" wird
+  noch einmal zur Sicherheit gefragt, ob die Stimme wirklich
+  gespeichert und verarbeitet werden soll
+- Kompatibilitaetsprobleme mit Perl 5.6.1 bei Variablenzuweisungen behoben
+
+Version 4.0beta4:
+- bei Regelverletzung wird jetzt ein interaktives Menue aufgerufen,
+  so dass der Wahlleiter entscheiden kann, was er machen will
+- Stimmerkennung legt unbekannte Vote-Strings (nicht Ja, Nein,
+  Enthaltung oder Annullierung) jetzt dem Wahlleiter vor und
+  laesst ihn entscheiden (Default ist Enthaltung). Fehlermail ist
+  in so einem Fall bislang nicht vorgesehen, laesst sich aber noch
+  einbauen, falls erforderlich. Wenn der Waehler die Bestaetigung
+  ueberprueft, reicht es auch, wenn dort "Enthaltung" auftaucht...
+- Pruefung auf vollstaendige Bestaetigung der Datenschutz-Klausel
+  ist implementiert und ueber usevote.cfg und bdsgtext.txt konfigurierbar
+- Regelpruefung kompakter und dreimal schneller gemacht (Idee von
+  Cornell Binder), dafuer Code schlechter lesbar... aber dokumentiert ;-)
+- Alle Regel-Subs in UVrules.pm ausgelagert
+
+Version 4.0beta3:
+- Einlesen und Testen der Konfiguration sowie Ausgabe der Regeln
+  im Klartext sind jetzt im externen Modul UsevoteConfig.pm untergebracht
+- Das Einlesen der Mail und MIME-Bearbeitung erfolgt wurde in das
+  Modul UsevoteReadmail.pm ausgelagert
+- verdaechtige Mailadressen werden nun in einer gesonderten Datei
+  konfiguriert (Default: mailpatterns.cfg)
+- Fehler bei Parsing von %body% und %headbody% in acktext.txt behoben
+
+Version 4.0beta2:
+- Auslagerung des Abschnittes [Realname Info] nach acktext.txt
+  (vorher hardcoded)
+- Einfuehrung des Platzhalters %version% fuer acktext.txt
+- Einfuehrung der Option voteack (Einzelbestaetigung kann deaktiviert werden)
+- saemtliche Konfigurationsoptionen sind nun mit Defaultwerten belegt,
+  aber wahlspezifische Optionen (Gruppennamen etc.) muessen natuerlich
+  auf jeden Fall gesetzt werden
+- Aenderung der Stimmerkennungsmethode. Um problemlos mit eigenwilligen
+  Zeilenumbruechen diverser schrottiger Software umgehen zu koennen,
+  wird ein Identifier an den Zeilenanfang gesetzt und direkt dahinter
+  die Stimme. Der Gruppenname kann dann ruhig umgebrochen sein.
+
+Version 4.0beta1:
+- kompletter Rewrite in Perl. Noch ziemlich unvollstaendig (nur uvvote.pl)
+
+bis Version 3.1beta7 (Wolfgang Behrens):
+- Funktionialitaet fuer persoenliche Wahlschein eingebaut
+- Reply-To Auswertung u.a. auf GVV-Beduerfnisse angepasst
+
+Version Usevote 3.0a
+- Uebersetzung ins Deutsche und Anpassung an Wahlregeln in de.*
+  (Frederik Ramm)
+
+Version Usevote 3.0
+- Urversion von Ron Dippold (Englisch), nicht an hiesige Wahlregeln angepasst

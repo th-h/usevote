@@ -1,0 +1,19 @@
+votetaker       := value mailfrom | fill-left 65
+head            := value head     | quote "> "
+body            := value body     | quote "> "
+
+== TEMPLATE =================================================================
+In deinem Wahlschein konnte keine Wahlscheinkennung gefunden werden,
+diese wurde dir zusammen mit dem Wahlschein zugeschickt. Solltest
+du noch keine eigenen Wahlscheinkennung haben, so kannst du mit
+einer Mail an die im CfV genannte Adresse eine anfordern.
+
+Hier die Mail, die ich erhalten habe:
+
+[$head]
+>
+[$body]
+
+
+[$votetaker]
+\[mit [$usevote_version]\]

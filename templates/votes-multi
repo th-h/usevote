@@ -1,0 +1,36 @@
+grafix 		:= value group | multi-graph 72 pos groupcount
+grafix-line	:= multi-line 72 groupcount
+multi-line 	:= value name | append vote | justify-before mail 72
+invalid-line	:= value name | justify-before mail 72
+numinvalid      := value numinvalid | fill-left 4
+yes		:= value yes | fill-left 4
+no		:= value no | fill-left 4
+condition1	:= value cond1 | fill-both 4
+condition2	:= value cond2 | fill-both 5
+result		:= value result | fill-both 5
+
+== TEMPLATE ============================================================
+
+========================================================================
+
+Wichtiger Hinweis:
+
+Die unten aufgefuehrten Personen haben der Speicherung, Verarbeitung
+und Veroeffentlichung ihrer Adressen und Stimmdaten nur im Rahmen dieses
+Verfahrens zugestimmt. Eine Verwendung darueber hinaus wurde nicht
+erlaubt. Damit ist insbesondere die Nutzung oder Uebermittlung der Daten
+fuer Werbezwecke oder fuer die Markt- oder Meinungsforschung verboten.
+
+========================================================================
+
+
+Liste der gezaehlten Stimmen:
+
+[@groups|[$grafix]|\n]
+[$grafix-line]
+[@multi|[$multi-line]|\n]
+
+
+Ungueltige Stimmen:
+------------------------------------------------------------------------
+[@invalid|[$invalid-line]\n[$reason]|\n]

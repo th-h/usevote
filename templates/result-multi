@@ -1,0 +1,31 @@
+votename-first        := value votename | first-words 60
+votename-more         := value votename | drop-words 60 | create-lines 60
+numinvalid            := value numinvalid | fill-left 4
+numabstain-formatted  := value numabstain | fill-left 4
+yes                   := value yes | fill-left 4
+no                    := value no | fill-left 4
+group-first           := value group | first-words 40
+group-more            := value group | drop-words 40 | create-lines 40
+
+== TEMPLATE ============================================================
+
+Ergebnisse [$votename-first]
+[@votename-more|           [$line]\n]
+([$numvalid] gueltige Stimmen)
+
+ Ja  Nein : 2/3? >=60? : ang.? : Gruppe
+---- ---- : ---- ----- : ----- : ---------------------------------------
+[@count|[$yes] [$no] : [?cond1| Ja |Nein] [?cond2| Ja |Nein]  : [?result| Ja |Nein]  : [$group-first]
+[@group-more|          :            :       : [$line]\n]\n]
+[?numabstain|[$numabstain-formatted] Enthaltungen]
+[?numinvalid|[$numinvalid] ungueltige Stimme(n)]
+
+Gegen dieses Ergebnis kann innerhalb einer Woche nach seiner
+Veroeffentlichung Einspruch erhoben werden. Der Einspruch ist per
+E-Mail bei der Moderation von de.admin.news.announce (Adressen
+siehe Signatur) einzulegen.
+Wenn es keine ernsthaften Einsprueche gibt oder diese abgelehnt
+werden, wird die Moderation von de.admin.news.announce das
+Ergebnis danach umsetzen.
+
+

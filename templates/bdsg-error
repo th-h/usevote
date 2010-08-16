@@ -1,0 +1,29 @@
+votetaker       := value mailfrom | fill-left 65
+
+== TEMPLATE =================================================================
+Zur Wertung deiner Stimme ist die Zustimmung zur Speicherung,
+Verarbeitung und Veroeffentlichung der Stimmabgabe erforderlich.
+Diese Zustimmung konnte nicht automatisch erkannt werden.
+deine Stimme wurde daher geloescht und wird nicht gewertet.
+
+Dieses kann folgende Gruende haben:
+
+* In deinem Wahlschein fehlt der Abschnitt, der ueber die Art
+  der Verarbeitung deiner Stimmdaten informiert, oder er wurde
+  als nicht vollstaendig erkannt. Um bezueglich des deutschen
+  Bundesdatenschutzgesetzes keine Risiken einzugehen, muss ich
+  darauf bestehen, dass dieser Absatz unveraendert mitgeschickt
+  und akzeptiert wird.
+
+* Du hast nicht der Speicherung/Verarbeitung/Veroeffentlichung
+  zugestimmt. Im dazugehoerigen Feld muss "JA" eingetragen
+  werden.
+
+Bitte stimme erneut ab, lasse dabei den Hinweistext im
+Wahlschein intakt und akzeptiere die Klausel, indem du im
+vorgesehen Feld "JA" eintraegst. Sollte das Problem aufgrund eines
+Uebermittlungsfehlers bestehen bleiben, melde Dich bitte unter
+der unten angegebenen Adresse bei mir.
+
+[$votetaker]
+\[mit [$usevote_version]\]

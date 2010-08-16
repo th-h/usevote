@@ -1,0 +1,33 @@
+mail-name 	:= value mail | justify name 72
+invalid-line	:= value name | justify-before mail 72
+
+== TEMPLATE ============================================================
+
+========================================================================
+
+Wichtiger Hinweis:
+
+Die unten aufgefuehrten Personen haben der Speicherung, Verarbeitung
+und Veroeffentlichung ihrer Adressen und Stimmdaten nur im Rahmen dieses
+Verfahrens zugestimmt. Eine Verwendung darueber hinaus wurde nicht
+erlaubt. Damit ist insbesondere die Nutzung oder Uebermittlung der Daten
+fuer Werbezwecke oder fuer die Markt- oder Meinungsforschung verboten.
+
+========================================================================
+
+
+Ja gestimmt:
+------------------------------------------------------------------------
+[@yes|[$mail-name]\n]
+
+Nein gestimmt:
+------------------------------------------------------------------------
+[@no|[$mail-name]\n]
+
+[?abstain|Enthaltung:
+------------------------------------------------------------------------
+[@abstain|[$mail-name]\n]]
+
+Ungueltige Stimmen:
+------------------------------------------------------------------------
+[@invalid|[$invalid-line]\n[$reason]|\n]

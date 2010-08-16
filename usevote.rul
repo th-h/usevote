@@ -1,0 +1,68 @@
+# UseVote  (c) 1993,94 Ron Dippold, alle Rechte vorbehalten
+#	   uebersetzt von Frederik Ramm
+#
+# Mit dieser Datei koennen spezielle Regeln fuer eine gueltige Stimmabgabe
+# bei Mehrgruppenabstimmungen erstellt werden.
+# Beispiel: Eine Gruppe soll aufgeteilt werden, und Du willst erzwingen,
+# dass jemand, der fuer eine der neuen Untergruppen stimmt, auch fuer
+# die .misc-Gruppe stimmen muss. Man kann eine Menge komplexe Sachen hier-
+# mit machen, wenn man Programmierer ist :-)
+#
+# Das allgemeine Format sieht so aus:
+# (a) alles, was mit # anfaengt, ist ein Kommentar.
+# (b) "echte" Regeln sehen etwa so aus (natuerlich ohne #):
+#   if .jjjjj then J.....
+#
+# Eine Regel beginnt immer mit "if", und danach folgen eine Anzahl Symbole;
+# diese Anzahl muss gleich der Anzahl der Gruppen sein, ueber die abgestimmt
+# wird.
+# Oben geht es also um eine Abstimmung ueber sechs Gruppen.
+# Die Symbole zwischen 'if' und 'then' geben an, welche Bedingungen erfuellt
+# sein muessen, damit das System auch die Bedingungen hinter then prueft.
+#
+# Nach 'then' folgen nochmal so viele Symbole, die angeben, welche Bedin-
+# gungen erfuellt sein muessen, falls die Bedingungen zwischen 'if' und
+# 'then' erfuellt waren. Jeder Wahlschein, auf den das nicht zutrifft, ist
+# ungueltig.
+#
+# Folgende Symbole sind erlaubt:
+#   J	eine JA-Stimme
+#   N	eine NEIN-Stimme
+#   E	eine Enthaltung
+#   S	eine JA- oder NEIN-Stimme
+#   H   eine Enthaltung oder JA-Stimme
+#   I   eine Enthaltung oder NEIN-Stimme
+#   .	egal (Ja, nein oder Enthaltung)
+#   j	eine oder mehrere der markierten Gruppen hat JA-Stimme
+#   n	 ""   ""    ""     ""     ""       ""    ""  NEIN-Stimme
+#   e	 ""   ""    ""     ""     ""       ""    ""  Enthaltung
+#   s	 ""   ""    ""     ""     ""       ""    ""  Ja- oder Nein-Stimme
+#   h	 ""   ""    ""     ""     ""       ""    ""  Enthaltung oder Ja-Stimme
+#   i	 ""   ""    ""     ""     ""       ""    ""  Enthaltung oder Nein-Stimme
+#
+# Alles klar?  Jede Stimme wird mit den Symbolen verglichen, und wenn alle
+# Kriterien passen, ist der Ausdruck wahr. Wenn der erste Ausdruck (if x)
+# wahr ist, muss auch der zeite (then y) wahr sein, sonst ist der Wahlschein
+# ungueltig. Ein Beispiel:
+#   if .jjjjj then J.....
+# Das heisst: Wenn der Waehler fuer *irgendeine* ausser der ersten Gruppe mit
+# JA stimmt, dann *muss* er JA fuer die erste Gruppe stimmen, oder das ganze
+# ist ungueltig.
+# Das koennte z.B. eine Gruppenaufteilung sein, wo fuer die erste (die .misc)-
+# Gruppe gestimmt werden *muss*, wenn fuer eine der anderen gestimmt wird.
+#
+# Hier noch ein Beispiel:
+#    if S... then .ss.
+#    if .S.. then ..E.
+#    if ..S. then .E..
+# Diese Regeln sagen: Wer fuer die erste Gruppe abstimmt, der muss auch fuer
+# die zweite und dritte Gruppe abstimmen - egal wie. Ausserdem muss er (Re-
+# geln 2 und 3) sich bei 3 enthalten, wenn er bei 2 eine Stimme abgibt und
+# umgekehrt. Die vierte Gruppe wird hier gar nicht betroffen.
+#
+# Also: es gibt einfache Regeln, aber es sind auch sehr komplizierte Kom-
+# binationen denkar. Das Programm macht alles mit... die Frage ist, ob
+# es die Waehler tun :-)
+#
+# Fuege Deine Regeln hier an. Mit "uvvote.pl -t" kannst Du sie testen.
+
