@@ -123,7 +123,7 @@ if ($clean) {
   my $ext = time;
 
   opendir (TMP, $config{tmpdir});
-  my @tmpfiles = readdir (DIR);
+  my @tmpfiles = readdir (TMP);
   closedir (TMP);
   opendir (FERTIG, $config{archivedir});
   my @fertigfiles = readdir (FERTIG);
