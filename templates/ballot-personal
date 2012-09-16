@@ -29,7 +29,7 @@ votetaker       := value mailfrom | fill-left 65
 
 =-=-=-=-=-=-=-=- Alles vor dieser Zeile bitte loeschen =-=-=-=-=-=-=-=-
 
-WAHLSCHEIN fuer [$votename-first]
+[$ballotintro] [$votename-first]
 [@votename-more|                [$line]\n]
 
 

@@ -1,9 +1,7 @@
-UseVoteGer Versionshistorie (aktuelle Version: 4.10, released )
+UseVoteGer Versionshistorie (aktuelle Version: 4.10, released 17.09.2012)
 =========================================================================
 
 TODO:
-- Fehler in Annullierungsbearbeitung (wird nur bei erstem oder letztem
-  Abstimmungspunkt ausgewertet)
 - aussortieren von Bounces aus Stimmenliste
 - Unterstuetzung von Maildir
 - [Zugschlus] ich fänd es klasse, wenn man eine Kopie des Wahlscheines ins
@@ -12,16 +10,27 @@ oder wdiff zwischen Sollwahlschein und wirklich eingreichtem
 Wahlschein macht. Auf diese Weise erwischt man auch kleine Änderungen
 am Datenschutzhinweis (da bin ich eben in eine Falle von th-h getappt).
 
-Version 4.10:
+Version 4.10 (17.09.2012):
 - Fehler in uvvote.pl, Zeile 126 behoben (Verarbeitung von temporaeren
   Dateien - es wurde nicht korrekt auf vorhandene Temp-Dateien
   geprueft)
 - Typo in bdsgtext.cfg behoben
+- doppelten Identifier "VOTE_NO_VOTES" in messages.cfg/uvvote.pl umbenannt
 - templates/ack-mail: Votetaker (Unterschrift) linksbuendig statt 
   wie vorher rechtsbuendig einfuegen; Anleitung fuer Annullierungen
   verbessert; Hinweis darauf, dass Stimmaenderungen an den
   Voteaccount geschickt werden muessen und nicht einfach als Antwort
   auf die Ack-Mail geschickt werden koennen)
+- Fehler in Annullierungsbearbeitung behoben (wurde nur bei erstem
+  oder letztem Abstimmungspunkt ausgewertet)
+- Abstimmungsname wird nun auf Korrektheit geprüft (Wahlschein gehört
+  zur richtigen Abstimmung)
+- neue Konfigurations-Option "ballotintro" und neues Template
+  tpl_wrong_voting
+- usenet@ und news@ werden nicht mehr als ungueltige Mailadressen
+  angesehen. Vor allem usenet@ wird von vielen Waehlern verwendet.
+- Aenderung der Wahlregeln: statt 60 nur noch 50 JA-Stimmen benoetigt
+- kleinere Template-Aenderungen (verbesserte Texte/Formatierungen)
 
 Version 4.09 (14.09.2007):
 - "votefile"-Option in usevote.cfg an passendere Stelle verschoben und

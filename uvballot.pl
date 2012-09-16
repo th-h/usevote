@@ -1,8 +1,8 @@
 #!/usr/bin/perl -w
 
 ###############################################################################
-# UseVoteGer 4.09 Wahlscheingenerierung
-# (c) 2001-2005 Marc Langer <uv@marclanger.de>
+# UseVoteGer 4.10 Wahlscheingenerierung
+# (c) 2001-2012 Marc Langer <uv@marclanger.de>
 # 
 # This script package is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Public License as published by the

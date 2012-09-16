@@ -1,0 +1,21 @@
+votetaker       := value mailfrom | fill-left 65
+body            := value body     | quote "> "
+
+== TEMPLATE =================================================================
+Offenbar hast du einen Wahlschein fuer eine andere Abstimmung eingesandt
+oder der Name der Abstimmung geht aus dem Wahlschein nicht hervor. Wenn
+das ein Irrtum war, pruefe bitte noch einmal die im CfV angegebene
+Abstimmungsadresse und wiederhole Deine Stimmabgabe.
+
+Dieser Fehler kann auftreten, wenn Du an mehreren Abstimmungen teilnimmst
+und den Wahlschein von Hand einsendest (und dabei mehrere Abstimmungen
+verwechselst), oder wenn Du die Bezeichnung der Abstimmung im Wahlschein
+veraendert oder geloescht hast.
+
+Hier die Mail, die ich erhalten habe:
+
+[$body]
+
+
+[$votetaker]
+\[mit [$usevote_version]\]

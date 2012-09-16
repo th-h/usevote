@@ -18,7 +18,7 @@ require Exporter;
 $VERSION = "0.18";
 
 # Usevote version
-$usevote_version = "UseVoteGer 4.09";
+$usevote_version = "UseVoteGer 4.10";
 
 sub read_config {
 

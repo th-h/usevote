@@ -17,7 +17,8 @@ $VERSION = "0.4";
 ##############################################################################
 # Menu for interaction with the votetaker                                    #
 # Parameters: votes list and header (references to arrays)                   #
-#             Body, Mailadress, Name, Ballot ID (references to strings)      #
+#             Body, Mailadress, Name, Ballot ID,                             #
+#             Voting (references to strings)                                 #
 #             List of newly set fields (reference to array)                  #
 #             List of errors to correct (Array-Ref)                          #
 # Return Values: 'w': proceed                                                #
@@ -25,7 +26,7 @@ $VERSION = "0.4";
 ##############################################################################
 
 sub menu {
-  my ($votes, $header, $body, $addr, $name, $ballot_id, $set, $errors) = @_;
+  my ($votes, $header, $body, $addr, $name, $ballot_id, $voting, $set, $errors) = @_;
   my $input = "";
   my $voter_addr = $$addr || '';
   my $voter_name = $$name || '';
@@ -79,6 +80,7 @@ sub menu {
       print "(5) ", UVmessage::get("MENU_BALLOT_ID"), " [$$ballot_id]\n"
         if ($config{personal});
       print "(6) ", UVmessage::get("MENU_BDSG"), "\n" if ($config{bdsg});
+      print "(7) ", UVmessage::get("MENU_VOTING"), " [", $$voting, "]\n";
     }
 
     print "\n",
@@ -267,6 +269,38 @@ sub menu {
         delete $errors{InvalidBDSG};
       } else {
         $errors{InvalidBDSG} = UVmessage::get("MENU_INVALIDBDSG");
+      }
+
+    } elsif ($input eq '7') {
+      my $sel;
+      do {
+        print "[a] ", UVmessage::get("MENU_VOTING_CORRECT"), "\n",
+              "[b] ", UVmessage::get("MENU_VOTING_WRONG"), "\n\n",
+              UVmessage::get("MENU_PROMPT");
+        $sel = <STDIN>;
+      } until ($sel =~ /^[ab]$/i);
+
+      if ($sel =~ /^a$/i) {
+        delete $errors{NoVoting};
+        delete $errors{WrongVoting};
+      } else {
+        $errors{WrongVoting} = UVmessage::get("MENU_WRONGVOTING");
+      }
+
+    } elsif ($input eq '7') {
+      my $sel;
+      do {
+        print "[a] ", UVmessage::get("MENU_VOTING_CORRECT"), "\n",
+              "[b] ", UVmessage::get("MENU_VOTING_WRONG"), "\n\n",
+              UVmessage::get("MENU_PROMPT");
+        $sel = <STDIN>;
+      } until ($sel =~ /^[ab]$/i);
+
+      if ($sel =~ /^a$/i) {
+        delete $errors{NoVoting};
+        delete $errors{WrongVoting};
+      } else {
+        $errors{WrongVoting} = UVmessage::get("MENU_WRONGVOTING");
       }
 
     } elsif ($input =~ /^i$/i) {

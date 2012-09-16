@@ -11,9 +11,10 @@ group-more            := value group | drop-words 40 | create-lines 40
 
 Ergebnisse [$votename-first]
 [@votename-more|           [$line]\n]
-([$numvalid] gueltige Stimmen)
 
- Ja  Nein : 2/3? >=60? : ang.? : Gruppe
+Es wurden [$numvalid] gueltige Stimmen abgegeben.
+
+ Ja  Nein : 2/3? >=50? : ang.? : Gruppe
 ---- ---- : ---- ----- : ----- : ---------------------------------------
 [@count|[$yes] [$no] : [?cond1| Ja |Nein] [?cond2| Ja |Nein]  : [?result| Ja |Nein]  : [$group-first]
 [@group-more|          :            :       : [$line]\n]\n]
@@ -24,6 +25,7 @@ Gegen dieses Ergebnis kann innerhalb einer Woche nach seiner
 Veroeffentlichung Einspruch erhoben werden. Der Einspruch ist per
 E-Mail bei der Moderation von de.admin.news.announce (Adressen
 siehe Signatur) einzulegen.
+
 Wenn es keine ernsthaften Einsprueche gibt oder diese abgelehnt
 werden, wird die Moderation von de.admin.news.announce das
 Ergebnis danach umsetzen.

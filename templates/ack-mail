@@ -5,15 +5,22 @@ pos             := value pos | fill-right 2
 group-first 	:= value group | first-words 50 
 group-more  	:= value group | drop-words 50 | create-lines 50
 vote            := value vote  | fill-both 10
-votetaker       := value mailfrom | fill-left 65
+votetaker       := value mailfrom
+voteaccount-line := value voteaccount | fill-both 70
 
 == TEMPLATE =================================================================
 Diese automatische Nachricht wurde dir nach Zaehlung deiner Stimme
 zugesandt. Wenn alles stimmt, gibt es keinen Anlass fuer eine Reaktion.
+
 Wenn deine Stimme falsch registriert wurde, stimme bitte erneut ab,
 indem du diese Mail komplett zitierst und die falschen Wertungen
 korrigierst (zwischen die eckigen Klammern schreiben). Dabei darf
 keinesfalls die laufende Nummer am Zeilenanfang entfernt werden.
+Beachte bitte, dass Du Deine Stimme an die Abstimmadresse senden
+musst! Es genuegt daher nicht, einfach auf diese E-Mail zu antworten,
+vielmehr muss die Antwort an die Adresse
+[$voteaccount-line]
+gerichtet sein.
 
 Diese Wahl ist oeffentlich, und die Adressen aller Waehlerinnen und
 Waehler werden am Ende bekanntgegeben. Wenn du deine Adresse & Stimme
@@ -29,8 +36,8 @@ Wahlscheinkennung gueltig!
 [$name-line]
   (Real-Namen sind fuer diese Abstimmung vorgeschrieben. Wenn hier
    nicht Dein wirklicher Name steht, dann korrigiere die Zeile
-   bitte und sende die Nachricht zurueck; sonst kann die Stimme
-   spaeter als ungueltig gewertet werden.)
+   bitte und sende die Nachricht erneut an die Abstimmadresse,
+   sonst kann die Stimme spaeter als ungueltig gewertet werden.)
 
 
 Deine Stimmabgabe wurde wie folgt erkannt:
@@ -39,8 +46,7 @@ Deine Stimmabgabe wurde wie folgt erkannt:
 [@group-more|                        [$line]\n]|\n]
 
 
-Danke fuer deine Stimmabgabe.  Eine Kopie des CfV kannst du von mir er-
-halten (bitte Namen der Abstimmung angeben, falls mehrere laufen).
+Danke fuer deine Stimmabgabe.
 
 [$votetaker]
 \[mit [$usevote_version]\]

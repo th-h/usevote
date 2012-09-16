@@ -14,7 +14,7 @@ bdsgtext-more   := value bdsgtext | drop-words 50 | create-lines 50
 
 =-=-=-=-=-=-=-=- Alles vor dieser Zeile bitte loeschen =-=-=-=-=-=-=-=-
 
-WAHLSCHEIN fuer [$votename-first]
+[$ballotintro] [$votename-first]
 [@votename-more|                [$line]\n]
 
 

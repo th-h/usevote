@@ -1,4 +1,4 @@
-UseVoteGer 4.09  (c) 2001-2007 Marc Langer
+UseVoteGer 4.10  (c) 2001-2012 Marc Langer
 
 UseVoteGer is a voting software for usenet votes.
 
@@ -18,7 +18,7 @@ written in C). Not all functions of Usevote/UseVoteGer 3.x are implemented!
  
 -------------------------------------------------------------------------------
 
-UseVoteGer 4.09 - Usenet-Abstimmungssoftware
+UseVoteGer 4.10 - Usenet-Abstimmungssoftware
 ===========================================
 
 von Marc Langer <uv@marclanger.de>
@@ -89,9 +89,6 @@ I. Einmalig bei der Usevote-Erstinstallation
        sehr einfach mit "perl -MCPAN -e shell", ActivePerl fuer
        Windows hat einen eigenen Paketmanager)
 
-       Achtung: Bei meinem ActivePerl 5.6.1 war eine alte Libnet-Version
-       enthalten, die noch keine SMTP-Authentication unterstuetzte.
-       Bei Benutzung dieses Features muss evtl. erst upgedated werden.
 
 II. Fuer jedes Voting
    (1) usevote.cfg auf das durchzufuehrende Voting anpassen
