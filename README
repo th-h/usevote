@@ -1,4 +1,4 @@
-UseVoteGer 4.10  (c) 2001-2012 Marc Langer
+UseVoteGer 4.11  (c) 2001-2012 Marc Langer
 
 UseVoteGer is a voting software for usenet votes.
 
@@ -18,7 +18,7 @@ written in C). Not all functions of Usevote/UseVoteGer 3.x are implemented!
  
 -------------------------------------------------------------------------------
 
-UseVoteGer 4.10 - Usenet-Abstimmungssoftware
+UseVoteGer 4.11 - Usenet-Abstimmungssoftware
 ===========================================
 
 von Marc Langer <uv@marclanger.de>
@@ -958,6 +958,7 @@ votename         Name der Abstimmung
 group1           Erster Abstimmungsgegenstand
 group2           Zweiter (und so weiter durchnummerieren)
 votefile         Mailbox mit eingehenden Stimmen (falls POP3 ausgeschaltet)
+mailboxtype      Typ der Mailbox (mbox, maildir)
 personal         Personalisierte Wahlscheine verwenden? [BOOL]
                  (siehe gesonderten Abschnitt weiter oben)
 voteaccount      Mailadresse, unter der abgestimmt werden kann

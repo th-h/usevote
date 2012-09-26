@@ -9,6 +9,7 @@ use UVmessage;
 use MIME::QuotedPrint;
 use MIME::Base64;
 use MIME::Parser;
+use Mail::Box::Manager;
 use POSIX qw(strftime);
 
 use vars qw($VERSION);
@@ -118,37 +119,52 @@ sub process {
       close (UIDLCACHE) or print STDERR UVmessage::get("READMAIL_UIDL_CLOSE") . "\n";
     }
 
-    # make archive of all mails
-    my $fileproblem = 0;
-    open (VOTES, ">$filename") or $fileproblem = 1;
-    if ($fileproblem) {
-      print STDERR UVmessage::get("READMAIL_ARCHIVE_PROBLEM",
-                   (FILE => $filename)) . "\n";
-    } else {
-      print VOTES join ("\n", @mails);
-      close (VOTES)
-        or print STDERR UVmessage::get("READMAIL_ARCHIVE_CLOSE",
-                        (FILE => $filename)) . "\n";
-    }
-
     $pop->quit();
 
+  # Mailbox / Maildir
   } else {
-    # open mail file
-    open(VOTES, "<$filename")
-        or die UVmessage::get("READMAIL_NOMAILFILE", (FILE => $filename)) . "\n\n";
 
-    # read all mails
-    my $i = 0;
-    while (<VOTES>) {
-      if (/$config{mailstart}/) {
-        $i++;
+    my $mgr = Mail::Box::Manager->new;
+    my $folder;
+
+    eval{
+      $folder = $mgr->open( folder => $config{votefile},
+                create => 0,
+                access => 'rw',
+                type   => $config{mailboxtype},
+                expand => 'LAZY',
+              );
+    };
+    die UVmessage::get("READMAIL_NOMAILFILE", (FILE => $config{votefile})) . "\n\n" if $@;
+
+    # Iterate over the messages.
+    foreach (@$folder) {
+      my $mail = $_->string;
+      $_->delete();
+      my $fromline = 'From ';
+      if ($mail =~ /From: .*?<(.+?)>/) {
+        $fromline .= $1;
+      } elsif ($mail =~ /From:\s+?(\S+?\@\S+?)\s/) {
+        $fromline .= $1;
+      } else {
+        $fromline .= 'foo@bar.invalid';
       }
-      $mails[$i] = ($mails[$i] || "") . $_;
+      $fromline .= ' ' . localtime() . "\n";  #strftime ('%a %b %d %H:%M:%S %Y', localtime) . "\n";
+      push (@mails, $fromline . $mail);
     }
+  }
 
-    # close mail file
-    close(VOTES);
+  # make archive of all mails
+  my $fileproblem = 0;
+  open (VOTES, ">$filename") or $fileproblem = 1;
+  if ($fileproblem) {
+    print STDERR UVmessage::get("READMAIL_ARCHIVE_PROBLEM",
+                 (FILE => $filename)) . "\n";
+  } else {
+    print VOTES join ("\n", @mails);
+    close (VOTES)
+      or print STDERR UVmessage::get("READMAIL_ARCHIVE_CLOSE",
+                      (FILE => $filename)) . "\n";
   }
 
   foreach my $mail (@mails) {

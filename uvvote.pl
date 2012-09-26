@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 ###############################################################################
-# UseVoteGer 4.10 Wahldurchfuehrung
+# UseVoteGer 4.11 Wahldurchfuehrung
 # (c) 2001-2012 Marc Langer <uv@marclanger.de>
 # 
 # This script package is free software; you can redistribute it and/or
@@ -135,16 +135,6 @@ if ($clean) {
   my $thisresult = "ergebnis-" . $ext;
   my $thisvotes = "stimmen-" . $ext;
   
-  # POP3 not activated: rename votes file
-  unless ($config{pop3}) {
-    print UVmessage::get("VOTE_RENAMING_MAILBOX"), "\n";
-    rename ($config{votefile}, "$config{tmpdir}/$thisvotes")
-       or die UVmessage::get("ERR_RENAME_MAILFILE") . "$!\n\n";
-  
-    #  wait, so that current mail deliveries can finalize
-    sleep 2;
-  }
-
   # open results file
   open (RESULT, ">>$config{tmpdir}/$thisresult")
      or die UVmessage::get("VOTE_WRITE_RESULTS", (FILE=>$thisresult)) . "\n\n";
@@ -241,7 +231,7 @@ sub process_vote {
   }
 
   # correct voting?
-  if ($$body =~ /\Q$config{ballotintro}\E\s+(.+?)\s*\n(.*?[\t ]+(\S+.+)\s*$)?/m) {
+  if ($$body =~ /\Q$config{ballotintro}\E\s+(.+?)[^\S\n]*\n([>:|]*?[\t ]+(\S+.+)\s*$)?/m) {
     $voting = $1;
     $voting .= " $3" if defined($3);
     push (@errors, 'WrongVoting') if ($config{votename} !~ /^\s*\Q$voting\E\s*$/);

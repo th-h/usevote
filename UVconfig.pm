@@ -18,7 +18,7 @@ require Exporter;
 $VERSION = "0.18";
 
 # Usevote version
-$usevote_version = "UseVoteGer 4.10";
+$usevote_version = "UseVoteGer 4.11";
 
 sub read_config {
 
@@ -45,6 +45,7 @@ sub read_config {
              voteaccount          => "<> (unkonfiguriertes Usevote)",
              mailfrom             => "<> (unkonfiguriertes Usevote)",
              envelopefrom         => "<>",
+             mailboxtype          => "mbox",
              mailstart            => "^From ",
              archivedir           => "fertig",
              tmpdir               => "tmp",

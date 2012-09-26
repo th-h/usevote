@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 ###############################################################################
-# UseVoteGer 4.10 Stimmauswertung
+# UseVoteGer 4.11 Stimmauswertung
 # (c) 2001-2012 Marc Langer <uv@marclanger.de>
 # 
 # This script package is free software; you can redistribute it and/or
