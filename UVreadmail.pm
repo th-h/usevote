@@ -145,6 +145,7 @@ sub process {
                 access => 'rw',
                 type   => $config{mailboxtype},
                 expand => 'LAZY',
+                remove_when_empty => 0,
               );
     };
     die UVmessage::get("READMAIL_NOMAILFILE", (FILE => $readfilename)) . "\n\n" if $@;
