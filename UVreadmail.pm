@@ -124,18 +124,30 @@ sub process {
   # Mailbox / Maildir
   } else {
 
+    my $readfilename;
+
+    if ($caller==0) {
+      # called from uvvote.pl: use configured mailbox file
+      $readfilename = $config{votefile};
+    } else {
+      # else use filename provided in function call
+      $readfilename = $filename;
+      # and create backup archive filename
+      $filename .= '.processed';
+    }
+
     my $mgr = Mail::Box::Manager->new;
     my $folder;
 
     eval{
-      $folder = $mgr->open( folder => $config{votefile},
+      $folder = $mgr->open( folder => $readfilename,
                 create => 0,
                 access => 'rw',
                 type   => $config{mailboxtype},
                 expand => 'LAZY',
               );
     };
-    die UVmessage::get("READMAIL_NOMAILFILE", (FILE => $config{votefile})) . "\n\n" if $@;
+    die UVmessage::get("READMAIL_NOMAILFILE", (FILE => $readfilename)) . "\n\n" if $@;
 
     # Iterate over the messages.
     foreach (@$folder) {

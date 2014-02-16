@@ -691,6 +691,10 @@ uvbounce.pl
   eingeschaltet und die Option -f (siehe unten) nicht benutzt wurde,
   werden die uebergebenen Dateinamen ignoriert.
 
+  Die Mails werden aus den uebergebenen Mailboxdateien geloescht
+  und statt dessen in einer neuen Datei mit der Erweiterung ".processed"
+  gespeichert.
+
   Die Vorlage fuer die ausgegebene Liste ist im templates-
   Unterverzeichnis konfigurierbar (Datei "bouncelist").
 
