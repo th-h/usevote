@@ -18,7 +18,7 @@ require Exporter;
 $VERSION = "0.18";
 
 # Usevote version
-$usevote_version = "UseVoteGer 4.11";
+$usevote_version = "UseVoteGer 4.12";
 
 sub read_config {
 
@@ -27,6 +27,7 @@ sub read_config {
   # Default configuration options (overwritten in usevote.cfg)
   %config = (votefile             => "votes",
              votename             => "unkonfiguriertes Usevote",
+             sampleballotfile     => "ballot.sample",
              resultfile           => "ergebnis.alle",
              rulefile             => "usevote.rul",
              badaddrfile          => "mailpatterns.cfg",
@@ -57,6 +58,7 @@ sub read_config {
              mailcc               => "",
              sleepcmd             => "sleep 1",
              clearcmd             => "clear",
+             diff                 => "diff",
              pager                => "less",
              pop3                 => 0,
              pop3server           => "localhost",
@@ -90,6 +92,7 @@ sub read_config {
              nein_stimme          => '(N\s*E\s*I\s*N|N|(D\s*A\s*)?G\s*E\s*G\s*E\s*N)',
              enth_stimme          => '(E|E\s*N\s*T\s*H\s*A\s*L\s*T\s*U\s*N\s*G)',
              ann_stimme           => 'A\s*N\s*N\s*U\s*L\s*L\s*I\s*E\s*R\s*U\s*N\s*G',
+             bdsg_confirm         => 'JA',
              condition1           => '$yes>=2*$no', # twice as many yes as no
              condition2           => '$yes>=60',    # min 60 yes votes
              prop_formula         => '$yes/$no',

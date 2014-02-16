@@ -69,6 +69,12 @@ sub menu {
     my $menucaption = UVmessage::get("MENU_CAPTION");
     print "\n\n$menucaption\n";
     print "=" x length($menucaption), "\n\n";
+
+    # don't print this option if called from uvcfv.pl
+    unless ($mailonly) {
+      print "(0) ", UVmessage::get("MENU_DIFF_BALLOT"), "\n";
+    }
+
     print "(1) ", UVmessage::get("MENU_SHOW_MAIL"), "\n\n",
           UVmessage::get("MENU_CHANGE_PROPERTIES"), "\n",
           "(2) ", UVmessage::get("MENU_ADDRESS"), " [$voter_addr]\n";
@@ -95,7 +101,14 @@ sub menu {
     # only accept 1, 2, i and w if called from uvcfv.pl
     next if ($mailonly && $input !~ /^[12iw]$/i);
 
-    if ($input eq '1') {
+    if ($input eq '0') {
+      # ignore SIGPIPE (Bug in more and less)
+      $SIG{PIPE} = 'IGNORE';
+      open (DIFF, "|$config{diff} - $config{sampleballotfile} | $config{pager}");
+      print DIFF $$body, "\n";
+      close (DIFF);
+      
+    } elsif ($input eq '1') {
       system($config{clearcmd});
       # ignore SIGPIPE (Bug in more and less)
       $SIG{PIPE} = 'IGNORE';
