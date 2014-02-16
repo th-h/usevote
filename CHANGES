@@ -3,11 +3,14 @@ UseVoteGer Versionshistorie (aktuelle Version: 4.11, released 25.09.2012)
 
 TODO:
 - aussortieren von Bounces aus Stimmenliste
-- [Zugschlus] ich fänd es klasse, wenn man eine Kopie des Wahlscheines ins
-Abstimmungsverzeichnis legt und Usevote einem dann auf Abruf ein diff
-oder wdiff zwischen Sollwahlschein und wirklich eingreichtem
-Wahlschein macht. Auf diese Weise erwischt man auch kleine Änderungen
-am Datenschutzhinweis (da bin ich eben in eine Falle von th-h getappt).
+
+Version 4.12 (19.01.2014):
+- neue Config-Optionen "diff" und "sampleballotfile"
+- im Fehlermenue bei der Wahlscheinverarbeitung ist es nun moeglich,
+  mit der Option "0" einen Dateivergleich (diff) zwischen dem gemailten
+  Wahlschein und einem Musterwahlschein (wie im CfV geposted) zu starten.
+  Dazu muss die Config-Option "sampleballotfile" gesetzt und die Datei
+  vorhanden sein (Standard-Dateiname: ballot.sample)
 
 Version 4.11 (25.09.2012):
 - Regular Expression fuer Pruefung des Abstimmungsnamens verbessert.

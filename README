@@ -324,6 +324,7 @@ ohne die .pl und .pm Dateien jedesmal mitzukopieren. Folgende Dateien
 sollten im Abstimmungsverzeichnis vorhanden sein (notwendig ist nur
 usevote.cfg, darin können alle anderen Pfade angepasst werden):
 
+ballot.sample
 bdsgtext.cfg
 mailpatterns.cfg
 messages.cfg
@@ -404,6 +405,7 @@ mit einzelnen Stimmen wirst Du interaktiv durch Menues gefuehrt.
 Meistens gibt es folgende Moeglichkeiten, die durch die
 eingeklammerten Buchstaben und Zahlen aufgerufen werden koennen:
 
+(0) Wahlschein mit Original vergleichen (diff)
 (1) Anzeigen der Wahlmail
 
 Bestaetigen oder Aendern von Wahlschein-Eigenschaften:
@@ -427,6 +429,9 @@ Teilweise gibt es Unteroptionen:
 Nun solltest Du zunaechst mit (1) die Mail ansehen und anhand
 der bemaengelten Punkte entscheiden, ob der Wahlschein gueltig
 oder ungueltig ist bzw. welche Maengel tatsaechlich zutreffen.
+Mit (0) kannst Du einen Dateivergleich zu einem vorher hinterlegten
+Musterwahlschein ausführen ("diff"), um Aenderungen/Fehler schneller
+zu sehen.
 
 Mit den Optionen (2) bis (7) kannst Du einzelne Eigenschaften
 des Wahlscheins nachbessern (wenn Usevote z.B. einen Namen oder
@@ -958,6 +963,7 @@ Hier eine Auflistung der immer anzupassenden Optionen
 votename         Name der Abstimmung
 group1           Erster Abstimmungsgegenstand
 group2           Zweiter (und so weiter durchnummerieren)
+sampleballotfile Datei mit Musterwahlschein aus dem CfV fuer Dateivergleich (diff)
 votefile         Mailbox mit eingehenden Stimmen (falls POP3 ausgeschaltet)
 mailboxtype      Typ der Mailbox (mbox, maildir)
 personal         Personalisierte Wahlscheine verwenden? [BOOL]
@@ -1026,6 +1032,10 @@ clearcmd         Shellbefehl zum Loeschen des Bildschirms (Standard: clear),
                  oder Betriebssystem keinen solchen Befehl bereitstellen,
                  sollte ein Kommando verwendet werden, welches eine Trennlinie
                  oder aehnliches auf dem Bildschirm ausgibt, z.B. mit "echo"
+diff             Shellbefehl zum Dateivergleich (diff); es koennen auch 
+                 Parameter angegeben werden, z.B. "diff -u". Das verwendete
+                 Programm muss das Lesen einer Datei von STDIN erlauben
+                 ("-" statt Dateinamen fuer Einlesen von Standardeingabekanal)
 pager            Shellbefehl zum seitenweisen Darstellen von Mails auf dem
                  Bildschirm (normalerweise "less"). Unter Windows muss "more"
                  benutzt werden, unter Unix hingegen gibt es moeglicherweise
