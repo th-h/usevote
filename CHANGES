@@ -12,7 +12,7 @@ am Datenschutzhinweis (da bin ich eben in eine Falle von th-h getappt).
 Version 4.11 (25.09.2012):
 - Regular Expression fuer Pruefung des Abstimmungsnamens verbessert.
   Es kam zu vielen False Positives
-- Einlesen der Mailbox auf Perlmodule Mail::Box umgestellt, damit
+- Einlesen der Mailbox auf Perlmodul Mail::Box umgestellt, damit
   auch Maildir moeglich (neue Option "mailboxtype" in usevote.cfg).
   Archivierung erfolgt aber vorerst weiterhin immer als mbox
 

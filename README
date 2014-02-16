@@ -412,6 +412,7 @@ Bestaetigen oder Aendern von Wahlschein-Eigenschaften:
 (4) Stimmen
 (5) Scheinkennung
 (6) Datenschutzklausel
+(7) Abstimmung
 
 (i) Diese Stimme ignorieren (ohne Benachrichtigung verwerfen)
 (w) Weiter
@@ -427,7 +428,7 @@ Nun solltest Du zunaechst mit (1) die Mail ansehen und anhand
 der bemaengelten Punkte entscheiden, ob der Wahlschein gueltig
 oder ungueltig ist bzw. welche Maengel tatsaechlich zutreffen.
 
-Mit den Optionen (2) bis (6) kannst Du einzelne Eigenschaften
+Mit den Optionen (2) bis (7) kannst Du einzelne Eigenschaften
 des Wahlscheins nachbessern (wenn Usevote z.B. einen Namen oder
 eine Stimme nicht korrekt erkannt hat) oder auch einfach die
 Korrektheit bestaetigen.
