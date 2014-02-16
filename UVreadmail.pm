@@ -162,7 +162,7 @@ sub process {
       } else {
         $fromline .= 'foo@bar.invalid';
       }
-      $fromline .= ' ' . localtime() . "\n";  #strftime ('%a %b %d %H:%M:%S %Y', localtime) . "\n";
+      $fromline .= ' ' . localtime($_->timestamp()) . "\n";
       push (@mails, $fromline . $mail);
     }
   }

@@ -8,6 +8,9 @@ Version 4.12 (19.01.2014):
 - uvbounce.pl und uvballot.pl benutzen jetzt wieder den uebergebenen
   Dateinamen statt irrtuemlich das Mailboxfile aus usevote.cfg
   (Bugfix in UVreadmail.pm)
+- UVreadmail.pm setzt beim Schreiben eines Mailarchivs nun einen
+  Timestamp in der mbox-Fromline, der aus der Mail stammt
+  (timestamp()-Funktion von Mail::Box) statt dem aktuellen Datum
 - UVreadmail.pm laesst nun Mailboxdateien bzw. -ordner bestehen,
   auch wenn sie leer sind, um Kompatibiliaetsprobleme mit anderen
   Programmen zu vermeiden
