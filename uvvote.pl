@@ -231,9 +231,9 @@ sub process_vote {
   }
 
   # correct voting?
-  if ($$body =~ /\Q$config{ballotintro}\E\s+(.+?)[^\S\n]*\n([>:|]*?[\t ]+(\S+.+)\s*$)?/m) {
+  if ($$body =~ /\Q$config{ballotintro}\E\s+(.+?)\s*\n([>:|]*?[\t ]+(\S+.+)\s*$)?/m) {
     $voting = $1;
-    $voting .= " $3" if defined($3);
+    $voting .= " $3" if (defined($3) and $3 !~ /\Q$config{nametext}\E/);
     push (@errors, 'WrongVoting') if ($config{votename} !~ /^\s*\Q$voting\E\s*$/);
   } else {
     push (@errors, 'NoVoting');
@@ -319,7 +319,7 @@ sub process_vote {
     # Should read like this: #a [ STIMME ] Text
     # (Text is configurable in usevote.cfg)
     unless ($$body =~ /$bdsg_regexp/s &&
-            $$body =~ /#a\W*?\[\W*?$config{ja_stimme}\W*?\]\W*?$bdsg2_regexp/is) {
+            $$body =~ /#a\W*?\[\W*?$config{bdsg_confirm}\W*?\]\W*?$bdsg2_regexp/is) {
 
       push (@errors, 'InvalidBDSG');
     }

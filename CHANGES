@@ -1,10 +1,10 @@
-UseVoteGer Versionshistorie (aktuelle Version: 4.12, released 19.01.2014)
+UseVoteGer Versionshistorie (aktuelle Version: 4.12, released 28.02.2014)
 =========================================================================
 
 TODO:
 - aussortieren von Bounces aus Stimmenliste
 
-Version 4.12 (19.01.2014):
+Version 4.12 (28.02.2014):
 - uvbounce.pl und uvballot.pl benutzen jetzt wieder den uebergebenen
   Dateinamen statt irrtuemlich das Mailboxfile aus usevote.cfg
   (Bugfix in UVreadmail.pm)
@@ -20,6 +20,15 @@ Version 4.12 (19.01.2014):
   Wahlschein und einem Musterwahlschein (wie im CfV geposted) zu starten.
   Dazu muss die Config-Option "sampleballotfile" gesetzt und die Datei
   vorhanden sein (Standard-Dateiname: ballot.sample)
+- im Fehlermenue wird nun der Name der Abstimmung als Ueberschrift
+  angezeigt. Ausserdem wurde in UVmenu.pm ein redundanter Code-Abschnitt
+  entfernt
+- BDSG-Klausel muss nun standardmaessig zwingend mit JA beantwortet
+  werden, DAFUER wird nicht mehr akzeptiert. Dies kann in usevote.cfg
+  konfiguriert werden
+- Regular Expression fuer Pruefung des Abstimmungsnamens weiter
+  verbessert
+- Standardwert fuer Mindest-JA-Stimmenzahl von 60 auf 50 verringert
 
 Version 4.11 (25.09.2012):
 - Regular Expression fuer Pruefung des Abstimmungsnamens verbessert.
