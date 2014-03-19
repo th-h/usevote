@@ -28,6 +28,7 @@ Version 4.12 (19.01.2014):
   konfiguriert werden
 - Regular Expression fuer Pruefung des Abstimmungsnamens weiter
   verbessert
+- Standardwert fuer Mindest-JA-Stimmenzahl von 60 auf 50 verringert
 
 Version 4.11 (25.09.2012):
 - Regular Expression fuer Pruefung des Abstimmungsnamens verbessert.
