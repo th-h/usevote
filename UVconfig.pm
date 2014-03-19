@@ -121,6 +121,7 @@ sub read_config {
              tpl_rule_violated    => 'rule-violated',
              begin_divider        => 'Alles vor dieser Zeile bitte loeschen',
              end_divider          => 'Alles nach dieser Zeile bitte loeschen',
+             ballotintro          => 'WAHLSCHEIN fuer',
              nametext             => 'Dein Realname, falls nicht im FROM-Header:',
              nametext2            => 'Waehlername:',
              addresstext          => 'Waehleradresse:',

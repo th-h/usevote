@@ -26,6 +26,8 @@ Version 4.12 (19.01.2014):
 - BDSG-Klausel muss nun standardmaessig zwingend mit JA beantwortet
   werden, DAFUER wird nicht mehr akzeptiert. Dies kann in usevote.cfg
   konfiguriert werden
+- Regular Expression fuer Pruefung des Abstimmungsnamens weiter
+  verbessert
 
 Version 4.11 (25.09.2012):
 - Regular Expression fuer Pruefung des Abstimmungsnamens verbessert.
