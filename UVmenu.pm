@@ -60,6 +60,7 @@ sub menu {
   while (1) {
 
     system($config{clearcmd});
+    print "-> $config{votename} <-\n";
     print UVmessage::get("MENU_PROBLEMS") . "\n";
 
     foreach my $error (keys %errors) {
@@ -107,7 +108,7 @@ sub menu {
       open (DIFF, "|$config{diff} - $config{sampleballotfile} | $config{pager}");
       print DIFF $$body, "\n";
       close (DIFF);
-      
+
     } elsif ($input eq '1') {
       system($config{clearcmd});
       # ignore SIGPIPE (Bug in more and less)
@@ -282,22 +283,6 @@ sub menu {
         delete $errors{InvalidBDSG};
       } else {
         $errors{InvalidBDSG} = UVmessage::get("MENU_INVALIDBDSG");
-      }
-
-    } elsif ($input eq '7') {
-      my $sel;
-      do {
-        print "[a] ", UVmessage::get("MENU_VOTING_CORRECT"), "\n",
-              "[b] ", UVmessage::get("MENU_VOTING_WRONG"), "\n\n",
-              UVmessage::get("MENU_PROMPT");
-        $sel = <STDIN>;
-      } until ($sel =~ /^[ab]$/i);
-
-      if ($sel =~ /^a$/i) {
-        delete $errors{NoVoting};
-        delete $errors{WrongVoting};
-      } else {
-        $errors{WrongVoting} = UVmessage::get("MENU_WRONGVOTING");
       }
 
     } elsif ($input eq '7') {

@@ -20,6 +20,9 @@ Version 4.12 (19.01.2014):
   Wahlschein und einem Musterwahlschein (wie im CfV geposted) zu starten.
   Dazu muss die Config-Option "sampleballotfile" gesetzt und die Datei
   vorhanden sein (Standard-Dateiname: ballot.sample)
+- im Fehlermenue wird nun der Name der Abstimmung als Ueberschrift
+  angezeigt. Ausserdem wurde in UVmenu.pm ein redundanter Code-Abschnitt
+  entfernt
 
 Version 4.11 (25.09.2012):
 - Regular Expression fuer Pruefung des Abstimmungsnamens verbessert.
