@@ -319,7 +319,7 @@ sub process_vote {
     # Should read like this: #a [ STIMME ] Text
     # (Text is configurable in usevote.cfg)
     unless ($$body =~ /$bdsg_regexp/s &&
-            $$body =~ /#a\W*?\[\W*?$config{ja_stimme}\W*?\]\W*?$bdsg2_regexp/is) {
+            $$body =~ /#a\W*?\[\W*?$config{bdsg_confirm}\W*?\]\W*?$bdsg2_regexp/is) {
 
       push (@errors, 'InvalidBDSG');
     }
