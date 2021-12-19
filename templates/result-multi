@@ -14,7 +14,7 @@ Ergebnisse [$votename-first]
 
 Es wurden [$numvalid] gueltige Stimmen abgegeben.
 
- Ja  Nein : 2/3? >=50? : ang.? : Gruppe
+ Ja  Nein : 2/3? >=15? : ang.? : Gruppe
 ---- ---- : ---- ----- : ----- : ---------------------------------------
 [@count|[$yes] [$no] : [?cond1| Ja |Nein] [?cond2| Ja |Nein]  : [?result| Ja |Nein]  : [$group-first]
 [@group-more|          :            :       : [$line]\n]\n]
