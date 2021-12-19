@@ -4,6 +4,13 @@ UseVoteGer Versionshistorie (aktuelle Version: 4.12, released 28.02.2014)
 TODO:
 - aussortieren von Bounces aus Stimmenliste
 
+Version 4.13 (unreleased):
+- BDSG-Klausel an die DSGVO angepasst
+- "mailcmd" muss mit "--" enden, damit Mailadressen, die mit "-"
+  beginnen, richtig erkannt werden.
+- "diff -u" ist ein besserer Default für das Diff-Programm
+- Standardwert fuer Mindest-JA-Stimmenzahl von 50 auf 15 verringert
+
 Version 4.12 (28.02.2014):
 - uvbounce.pl und uvballot.pl benutzen jetzt wieder den uebergebenen
   Dateinamen statt irrtuemlich das Mailboxfile aus usevote.cfg
