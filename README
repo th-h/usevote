@@ -1,4 +1,4 @@
-UseVoteGer 4.12  (c) 2001-2014 Marc Langer
+UseVoteGer 4.13  (c) 2001-2022 Marc Langer
 
 UseVoteGer is a voting software for usenet votes.
 
@@ -12,13 +12,14 @@ Many thanks to:
 - Wolfgang Behrens (UseVoteGer 3.1, based on Frederik's translation, 1998/99)
 - Cornell Binder for some good advice and code fragments
   (e.g. UVtemplate.pm, UVformats.pm)
+- Thomas Hochstein for some patches
 
 This is a complete rewrite of UseVoteGer 3.1 in Perl (former versions were
 written in C). Not all functions of Usevote/UseVoteGer 3.x are implemented!
  
 -------------------------------------------------------------------------------
 
-UseVoteGer 4.12 - Usenet-Abstimmungssoftware
+UseVoteGer 4.13 - Usenet-Abstimmungssoftware
 ===========================================
 
 von Marc Langer <uv@marclanger.de>
@@ -187,8 +188,8 @@ UVrules.pm        Routinen zur Regelverarbeitung (usevote.rul)
 UVsendmail.pm     Routinen zum Erzeugen von Mails
 UVtemplate.pm     Routinen zur Verarbeitung von Vorlagen (Templates)
 bdsgtext.cfg      Spezieller Text fuer den Wahlschein (Hinweis auf
-                  DSGVO), muss ausserhalb Deutschlands ggfls.
-                  angepasst oder kann ignoriert werden (bdsg=0 in usevote.cfg)
+                  DSGVO), muss ausserhalb der EU ggfls. angepasst werden
+                  oder kann dort ignoriert werden (bdsg=0 in usevote.cfg)
 mailpatterns.cfg  Wildcards fuer verdaechtige Mailadressen
 messages.cfg      Programm-Meldungen (Ressourcen-Datei)
 scheinkennungen   Speicherung der Scheinkennungen bei personalisierten
@@ -1027,7 +1028,7 @@ domailfile       Name des Shellscripts zum Versenden der Bestaetigungsmails
                  (falls smtp=0, normalerweise tmp/domail)
 mailcmd          Aufruf des Mail Transfer Agents (MTA) zum Verschicken der
                  Bestaetigungsmails (falls smtp=0), z.B.
-                 "sendmail -oi -oem -femail@adresse -- "
+                 "sendmail -oi -oem -femail@adresse --"
 sleepcmd         Weiteres Kommando, welches nach jeder Mail aufgerufen werden
                  soll (falls smtp=0). Sinnvoll ist ein "sleep x", wobei x bei
                  langsamen Systemen hoeher gewaehlt werden sollte.
