@@ -187,7 +187,7 @@ UVrules.pm        Routinen zur Regelverarbeitung (usevote.rul)
 UVsendmail.pm     Routinen zum Erzeugen von Mails
 UVtemplate.pm     Routinen zur Verarbeitung von Vorlagen (Templates)
 bdsgtext.cfg      Spezieller Text fuer den Wahlschein (Hinweis auf
-                  Datenschutzgesetz), muss ausserhalb Deutschlands ggfls.
+                  DSGVO), muss ausserhalb Deutschlands ggfls.
                   angepasst oder kann ignoriert werden (bdsg=0 in usevote.cfg)
 mailpatterns.cfg  Wildcards fuer verdaechtige Mailadressen
 messages.cfg      Programm-Meldungen (Ressourcen-Datei)
@@ -524,7 +524,7 @@ Das Endergebnis kannst Du mit "uvcount.pl -r" ausgeben lassen.
 Bei Verfahren mit mehreren Abstimmungspunkten wird automatusch
 das folgende tabellarische Format verwendet:
 
- Ja  Nein : 2/3? >=60? : ang.? : Gruppe
+ Ja  Nein : 2/3? >=15? : ang.? : Gruppe
 ==== ==== : ==== ===== : ===== : =======================================
  100   70 : Nein   Ja  :  Nein : Einrichtung von xyz
 
@@ -989,7 +989,7 @@ onestep          Mails direkt verschicken und Ergebnisse speichern? [BOOL]
 multigroup       Fuer das Ergebnis auch bei Eingruppenabstimmung des
                  Mehrgruppenformat waehlen? [BOOL]
 condition1       Bedingungen fuer einen Erfolg der Abstimmung in Perl-Syntax
-condition2       (normalerweise "$yes>=2*$no" und "$yes>=60"
+condition2       (normalerweise "$yes>=2*$no" und "$yes>=15"
 resultfile       Datei fuer Gesamtergebnis (normalerweise ergebnis.alle)
 idfile           Datei mit Scheinkennungen (bei "personal=1")
 pop3             POP3 benutzen? [BOOL] (andernfalls Stimmen aus Datei lesen)
@@ -1027,7 +1027,7 @@ domailfile       Name des Shellscripts zum Versenden der Bestaetigungsmails
                  (falls smtp=0, normalerweise tmp/domail)
 mailcmd          Aufruf des Mail Transfer Agents (MTA) zum Verschicken der
                  Bestaetigungsmails (falls smtp=0), z.B.
-                 "sendmail -oi -oem -femail@adresse"
+                 "sendmail -oi -oem -femail@adresse -- "
 sleepcmd         Weiteres Kommando, welches nach jeder Mail aufgerufen werden
                  soll (falls smtp=0). Sinnvoll ist ein "sleep x", wobei x bei
                  langsamen Systemen hoeher gewaehlt werden sollte.

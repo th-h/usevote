@@ -94,7 +94,7 @@ sub read_config {
              ann_stimme           => 'A\s*N\s*N\s*U\s*L\s*L\s*I\s*E\s*R\s*U\s*N\s*G',
              bdsg_confirm         => 'JA',
              condition1           => '$yes>=2*$no', # twice as many yes as no
-             condition2           => '$yes>=50',    # min 60 yes votes
+             condition2           => '$yes>=15',    # min 15 yes votes
              prop_formula         => '$yes/$no',
              tpl_ack_mail         => 'ack-mail',
              tpl_bouncelist       => 'bouncelist',

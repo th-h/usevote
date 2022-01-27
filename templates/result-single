@@ -15,7 +15,7 @@ Es gab [$yes] Ja-Stimmen und [$no] Nein-Stimmen[?numabstain| bei [$numabstain] E
 [?numinvalid|[$numinvalid] Stimme(n) wurden als ungueltig gewertet.]
 
 Es wurde [?cond1|die|keine] 2/3-Mehrheit erreicht und es gingen [?cond2|mehr|weniger] als
-50 Ja-Stimmen ein. Damit ist die [$votename-text-first]
+15 Ja-Stimmen ein. Damit ist die [$votename-text-first]
 [@votename-text-more|[$line] |\n][?cond1|[?cond2|angenommen|abgelehnt]|abgelehnt].
 
 Gegen dieses Ergebnis kann innerhalb einer Woche nach seiner
